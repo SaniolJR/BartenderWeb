@@ -1,0 +1,71 @@
+TODO: TRANSLATE TO ENG
+
+==== Dring Yourself App ====
+============================
+FUNKCJONALNOSCI:
+============================
+	====	KLIENT	====
+1. Rejestracja konta
+2. Logowanie do konta
+3. Możliwość dodania drinku:
+	-nazwa
+	-składanki (zatwierdzone przez admina, 		nie)
+	-zdjęcie (jako upload pliku)
+4. Przeglądanie drinków
+	-na podstawie nazwy i wybranych składników
+	-możliwość wyboru opcji bez unvedified 	skladnikow - pokazuje tylko driny ze 	składnikami od admina
+	-sortowanie oceną
+	-możliwość wybrania verified drinkow
+4. Możliwość oceny drinku (gwiazdki)
+	-w wejściu do drinka przycisk dodaj ocene
+	-dodanie oceny w skali 1-10 i komentarza
+6. Możliwość dodania drinku do ulubionych
+	-przy wejściu do drinka
+7. Usunięcie drinka z ulubionych
+	-przy wejściu do drinka, jeśli jest
+8. Przeglądanie drinków z ulubionych
+	-specjalny panel, taki sam jak 	przyszukowanie drinków, ale tylko ze 	struktury danych przynależnej do konta
+9. Wysłanie prośby do admina o dodanie drinka/składnika do verified
+10. Możliwość zgłoszenia komantarza
+
+
+============================
+	====	ADMIN	====
+1. Logowanie (konto jedno lub kilka na palikacje dodawane czysto z bazy danych)
+2. Możliwość usuwania ocen drinków (anty-troll)
+3. Panel z prośbami o dodanie składnika:
+	-realizacja próśb (usuwanie z listy)
+	-możliwość dodania składnika
+4. Panel z zgłoszonymi komentarzami:
+	-usunięcie komentarza lub usunięcie 	reporta
+5. Panel z prośbami o zatwierdzenie drinka:
+	-usunięcie prośby lub zatwierdzenie
+
+
+---------------------------
+BACKEND:
+1. TDD
+2. walidacja DTO
+3. Clean architecture
+4. hashowanie haseł
+5. uwierzytelnianie JTW (endpoint ochrona i sesje logowania)
+6. walidacja formularzy
+7. cała logika 0 filtrowanie, wyszukiwanie
+8. testy E2E
+9. wzorce projektowe
+---------------
+Baza danych:
+-normalizacja do 3NF
+-relacja N:N
+-owerendy w OFM - Entity Framework pod SQL
+-uplowad plików(plik leci do dysku serwera(jakiś tam konkretny folder), SQL trzyma tylko URL
+-folder ze zdjęciami do gitignore
+--------------
+Frontend:
+-tylko wyświetlasz to co dostajesz od be i wysyłasz do be
+-szukanie z listy ulubionych drinków może być tutaj (na podstawie nazwy), inne to z BE
+-paginacja
+-używaj frameforku który ogarnia za CB html i CSS (framework komponentowy)
+-routing
+-wszystko na linkach ma się dziac, by można się dzielić URLami
+-responsywny design (działa inaczej na telefonie inaczej na pc)

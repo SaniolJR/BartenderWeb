@@ -18,15 +18,28 @@ public class WeatherForecastController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpPost]
+    [Route("generate")]
+    public ActionResult<IEnumerable<WeatherForecast>> Get([FromQuery] int count, [FromBody] Temperature temp)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        if (count < 0 || temp.min > temp.max || temp == null)
+        {
+            return BadRequest("Count < 0 || min > max");
+        }
+        var res = Enumerable.Range(1, count).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
+            TemperatureC = Random.Shared.Next(temp.min, temp.max),
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
         .ToArray();
+
+        return Ok(res);
     }
+}
+
+public class Temperature
+{
+    public int min { get; set; }
+    public int max { get; set; }
 }

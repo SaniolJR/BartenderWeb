@@ -53,6 +53,7 @@ BACKEND:
 7. cała logika 0 filtrowanie, wyszukiwanie
 8. testy E2E
 9. wzorce projektowe
+10. Dependency Injection
 ---------------
 Baza danych:
 -normalizacja do 3NF

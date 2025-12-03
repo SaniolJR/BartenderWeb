@@ -11,6 +11,10 @@ appsettings.Development.json
 appsettings.Local.json
 appsettings.*.local.json
 
+#security
+**/appsettings.json
+
+
 #         === .logs ===
 *.log
 logs/

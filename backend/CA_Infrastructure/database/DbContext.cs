@@ -5,7 +5,7 @@ using CA_Domain.Entities;
 
 namespace CA_Infrastructure
 {
-    public class MainDbContext : DbContext
+    internal class MainDbContext : DbContext
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options)
         {

@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Serialization;
+using CA_Infrastructure.DataSeeders;
 
 namespace CA_Infrastructure.Extensions
 {
@@ -11,6 +13,9 @@ namespace CA_Infrastructure.Extensions
             // Add DB using Dependency Injection
             var connectionString = configuration.GetConnectionString("DefaultConnection"); // poprawiona nazwa zmiennej
             services.AddDbContext<MainDbContext>(options => options.UseSqlServer(connectionString)); // poprawiona nazwa parametru i zmiennej
+
+            services.AddScoped<IUserSeeder, UserSeeder>();
+
         }
     }
 }

@@ -1,0 +1,40 @@
+using CA_Domain.Entities;
+using CA_Infrastructure;
+
+namespace CA_Infrastructure.DataSeeders
+{
+    public class UserSeeder : IUserSeeder
+    {
+        private readonly MainDbContext dbContext;
+
+        public UserSeeder(MainDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
+        public async Task Seed()
+        {
+            if (await dbContext.Database.CanConnectAsync())
+            {
+                if (!dbContext.Users.Any())
+                {
+                    var users = GetUsers();
+                    dbContext.Users.AddRange(users);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+        }
+
+        private IEnumerable<User> GetUsers()
+        {
+            List<User> users = [
+                new User {
+                    Passwd = "Haslo.123",
+                    Nick = "Emil G",
+                    Email = "emilGitarzysta@gmail.com"
+                }
+            ];
+            return users;
+        }
+    }
+}

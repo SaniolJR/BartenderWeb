@@ -6,6 +6,7 @@ namespace CA_Domain.Entities
         public string Name { get; set; }
         public string Receipe { get; set; }
         public List<Ingredient> Ingredients { get; set; }
+        public List<Drink> Drinks { get; set; }
 
     }
 }

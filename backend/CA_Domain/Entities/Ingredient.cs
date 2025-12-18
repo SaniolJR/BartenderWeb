@@ -4,5 +4,6 @@ namespace CA_Domain.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public List<Drink> Drinks { get; set; } = new();
     }
 }

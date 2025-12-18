@@ -13,7 +13,7 @@ namespace CA_Infrastructure
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Ingredient> Ingderients { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Drink> Drinks { get; set; }
     }
 }

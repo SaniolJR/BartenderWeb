@@ -8,5 +8,6 @@ namespace CA_Domain.Entities
         public List<Ingredient> Ingredients { get; set; } = new();
         public List<Rating> Ratings { get; set; } = new();
         public bool Verified { get; set; }
+        public string ImageURL { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.IO;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 
 
-namespace CA_Infrastructure
+namespace CA_Infrastructure.Database
 {
     //class with context factory, needed in EF migrations
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<MainDbContext>

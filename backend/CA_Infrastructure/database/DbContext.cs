@@ -3,7 +3,7 @@ using CA_Domain.Entities;
 
 //class which represents whole DB instance in project
 
-namespace CA_Infrastructure
+namespace CA_Infrastructure.Database
 {
     public class MainDbContext : DbContext
     {

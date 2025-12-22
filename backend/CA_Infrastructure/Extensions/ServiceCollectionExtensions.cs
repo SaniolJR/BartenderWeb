@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Serialization;
 using CA_Infrastructure.DataSeeders;
+using CA_Infrastructure.Database;
 
 namespace CA_Infrastructure.Extensions
 {

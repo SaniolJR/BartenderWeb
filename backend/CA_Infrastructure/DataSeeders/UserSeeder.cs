@@ -1,5 +1,5 @@
 using CA_Domain.Entities;
-using CA_Infrastructure;
+using CA_Infrastructure.Database;
 
 namespace CA_Infrastructure.DataSeeders
 {

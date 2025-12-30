@@ -7,6 +7,7 @@ namespace CA_Application
 {
     public interface IDrinkService
     {
+        Task<Drink> GetDrinkByIdAsync(int id);
         Task<Drink> AddDrinkAsync(AddDrinkDTO dto);
     }
 }

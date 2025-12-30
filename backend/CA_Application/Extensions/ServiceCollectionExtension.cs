@@ -8,6 +8,5 @@ public static class ServiceCollectionExtensions
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IDrinkService, DrinkService>();
-        // Tylko serwisy z Application!
     }
 }

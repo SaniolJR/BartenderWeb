@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA_Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20251219224006_AddDrinkImageUrl")]
-    partial class AddDrinkImageUrl
+    [Migration("20251230141225_MakeImageUrlNullable")]
+    partial class MakeImageUrlNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace CA_Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImageURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -48,7 +47,7 @@ namespace CA_Infrastructure.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Verified")
+                    b.Property<bool?>("Verified")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

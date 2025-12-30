@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CA_Application\CA_Application.csproj" />
     <ProjectReference Include="..\CA_Infrastructure\CA_Infrastructure.csproj" />
+    <ProjectReference Include="..\CA_Domain\CA_Domain.csproj" />
   </ItemGroup>
 
 </Project>

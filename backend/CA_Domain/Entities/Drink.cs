@@ -7,7 +7,7 @@ namespace CA_Domain.Entities
         public string Receipe { get; set; }
         public List<Ingredient> Ingredients { get; set; } = new();
         public List<Rating> Ratings { get; set; } = new();
-        public bool Verified { get; set; }
-        public string ImageURL { get; set; }
+        public bool? Verified { get; set; }
+        public string? ImageURL { get; set; }
     }
 }

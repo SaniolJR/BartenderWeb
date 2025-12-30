@@ -13,6 +13,10 @@ namespace CA_Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<Drink> GetDrinkByIdAsync(int id)
+        {
+            return await _dbContext.Drinks.FindAsync(id);
+        }
         public async Task<Drink> AddDrinkAsync(Drink drink)
         {
             _dbContext.Drinks.Add(drink);

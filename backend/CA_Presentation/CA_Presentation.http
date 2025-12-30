@@ -4,3 +4,12 @@ GET {{CA_Presentation_HostAddress}}/
 Accept: application/json
 
 ###
+POST {{CA_Presentation_HostAddress}}/api/drinks
+Content-Type: application/json
+
+{
+  "Name": "Whisky - Cola",
+  "Receipe": "Pour 40ml of Whisky in 250ml glass, and 160ml of CocaCola. Add some Ice."
+}
+
+###

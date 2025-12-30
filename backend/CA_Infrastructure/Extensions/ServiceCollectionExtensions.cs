@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.Serialization;
 using CA_Infrastructure.DataSeeders;
 using CA_Infrastructure.Database;
+using CA_Domain.Repositories;
+using CA_Infrastructure.Repositories;
 
 namespace CA_Infrastructure.Extensions
 {
@@ -16,6 +18,7 @@ namespace CA_Infrastructure.Extensions
             services.AddDbContext<MainDbContext>(options => options.UseSqlServer(connectionString)); // poprawiona nazwa parametru i zmiennej
 
             services.AddScoped<IUserSeeder, UserSeeder>();
+            services.AddScoped<IDrinkRepository, DrinkRepository>();
 
         }
     }

@@ -5,6 +5,7 @@ using CA_Infrastructure.DataSeeders;
 using CA_Application.Extensions;
 using CA_Application.DTOs;
 using CA_Application;
+using Middlewares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,12 +16,15 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 builder.Services.AddAutoMapper(typeof(DrinkProfile).Assembly);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

@@ -11,11 +11,11 @@ namespace CA_Infrastructure.Tests
     public class DrinkRepositoryIntegrationTests
     {
         [Fact]
-        public async Task AddDrinkAsync_ShouldAddDrinkToDatabase()
+        public async Task AddDrinkAsync_ValidDrink_AddsDrinkToDatabase()
         {
             // Arrange
             var options = new DbContextOptionsBuilder<MainDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
+                .UseInMemoryDatabase(databaseName: "TestDb1")
                 .Options;
             using var context = new MainDbContext(options);
             var repository = new DrinkRepository(context);
@@ -32,11 +32,11 @@ namespace CA_Infrastructure.Tests
         }
 
         [Fact]
-        public async Task GetDrinkByIdAsync_ShouldGetOne()
+        public async Task GetDrinkByIdAsync_ExistingId_ReturnsDrink()
         {
             // Arrange
             var options = new DbContextOptionsBuilder<MainDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: "TestDb2")
             .Options;
             using var context = new MainDbContext(options);
             var repository = new DrinkRepository(context);

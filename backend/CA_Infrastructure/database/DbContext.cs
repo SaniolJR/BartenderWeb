@@ -12,9 +12,9 @@ namespace CA_Infrastructure.Database
             //in options is URL to DB passed by framework
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<Drink> Drinks { get; set; }
-        public DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Ingredient> Ingredients { get; set; }
+        public virtual DbSet<Drink> Drinks { get; set; }
+        public virtual DbSet<Rating> Ratings { get; set; }
     }
 }

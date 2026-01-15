@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Container, Typography } from '@mui/material'
+import { Container, Grid, Paper, Typography, Box } from '@mui/material'
 import MissingIngredientCount from './ingredientsMissing'
 import VerifiedOnly from './verifiedOnly'
 import SearchByText from './searchByText.tsx'
+import IngredientsBox from './Ingredients/IngredientsBox'
 
 export default function SearchDrinkPage() {
   const [missingCount, setMissingCount] = useState<number>(0)
@@ -11,20 +12,52 @@ export default function SearchDrinkPage() {
 
   //temporary send http simulator
   const getDrinks = () => {
-    console.log({ missingCount, verified, textFilter }) // fixed typo
+    console.log({ missingCount, verified, textFilter }) 
   }
 
-  return (
-    <Container sx={{ py: 4 }}>
-
-      <MissingIngredientCount number={missingCount} setNumber={setMissingCount} />
-
-      <VerifiedOnly verified = {verified} setVerified={setVerified}/>
+ return (
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       
-      <SearchByText textFilter = {textFilter} setTextFilter={setTextFilter} onSearch={getDrinks}/>
-      
-      Aktualny textFilter {textFilter}
+      {/* MAIN CONTAINER */}
+      <Grid container spacing={3}>
 
+        {/* --- FILTERS - top bar */}
+        <Grid size={{xs: 12}}>
+          <Paper sx={{ p: 2, display: 'flex', gap: 2, justifyContent: 'space-around'}}>
+
+            {/*type missing indegridients*/}
+            <MissingIngredientCount number={missingCount} setNumber={setMissingCount} />
+            {/*check if want verified only*/}
+            <VerifiedOnly verified={verified} setVerified={setVerified}/>
+            {/*filter by text*/}
+            <SearchByText 
+                textFilter={textFilter} 
+                setTextFilter={setTextFilter} 
+                onSearch={getDrinks}
+            />
+          </Paper>
+        </Grid>
+
+        {/* LEFT PANEL - INGREDIENTS*/}
+        {/* get 3/12 width on PC and MAX on Phone */}
+        <Grid size={{ xs: 12, md: 3}} >
+          <Paper sx={{ p: 2, height: '70vh'}}>
+
+            <IngredientsBox/>
+
+          </Paper>
+        </Grid>
+
+        {/* MAIN PANEL: RETURNED DRINKS*/}
+        <Grid size={{xs: 12, md: 9 }} >
+          <Paper sx={{ p: 2,height: '70vh', bgcolor: '#3e010148' }}>
+          
+
+
+          </Paper>
+        </Grid>
+
+      </Grid>
     </Container>
   )
 }

@@ -32,7 +32,7 @@ export default function MissingIngredientCount({ number, setNumber }: Props) {
       value={number}
       onChange={handleChange}
       inputProps={{ min: 0 }}
-      size="small"
+      size="medium"
       //size of arrows to decrease and incerase num by one
       sx={{
     '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button':

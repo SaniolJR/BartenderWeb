@@ -1,8 +1,15 @@
 
 import { useState, type MouseEvent } from 'react'
 import { AppBar, Box, Button, Menu, MenuItem, Toolbar } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom'
 
-const navItems: string[] = ['Search', 'Add drink', 'Favourites Drinks', 'Account', 'Logout']
+const navItems = [
+  { label: 'Search', to: '/search' },
+  { label: 'Add drink', to: '/add' },
+  { label: 'Favourites Drinks', to: '/favourites' },
+  { label: 'Account', to: '/account' },
+  { label: 'Logout', to: '/logout' },
+] as const
 
 export default function NavBar() {
   //State to handle Menu dropwon on phones
@@ -39,11 +46,16 @@ export default function NavBar() {
          
          {/*DESKTOP VERSION*/}
          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, flexGrow: 1, justifyContent: 'space-evenly' }}>
-          {navItems.map((label) => (
-            <Button key={label} data-variant="nav">
-              {label}
+          {navItems.map((item) => (
+            <Button
+              key={item.to}
+              component={RouterLink}
+              to={item.to}
+              data-variant="nav"
+            >
+              {item.label}
             </Button>
-          ))} 
+          ))}
         </Box>      
 
         
@@ -54,9 +66,14 @@ export default function NavBar() {
           </Button>
 
           <Menu anchorEl={dropEL} open={menuOpen} onClose={handleCloseMenu}>
-            {navItems.map((label) => (
-              <MenuItem key={label} onClick={handleCloseMenu}>
-                {label}
+            {navItems.map((item) => (
+              <MenuItem
+                key={item.to}
+                component={RouterLink}
+                to={item.to}
+                onClick={handleCloseMenu}
+              >
+                {item.label}
               </MenuItem>
             ))}
           </Menu>

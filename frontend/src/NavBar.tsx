@@ -28,7 +28,7 @@ export default function NavBar() {
           height: '10vh',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-between',
           
         }}>
 
@@ -38,7 +38,7 @@ export default function NavBar() {
          
          
          {/*DESKTOP VERSION*/}
-         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, flexGrow: 1, justifyContent: 'space-evenly' }}>
           {navItems.map((label) => (
             <Button key={label} data-variant="nav">
               {label}
@@ -52,7 +52,7 @@ export default function NavBar() {
           <Button data-variant="nav" onClick={handleOpenMenu}>
             Menu
           </Button>
-          
+
           <Menu anchorEl={dropEL} open={menuOpen} onClose={handleCloseMenu}>
             {navItems.map((label) => (
               <MenuItem key={label} onClick={handleCloseMenu}>

@@ -34,9 +34,9 @@ export const theme = createTheme({
         root: {
           color: field.border,
           fontWeight: 700,
-        },
-        focused: {
-          color: field.main,
+          '&.Mui-focused': {
+            color: field.main,
+          },
         },
       },
     },

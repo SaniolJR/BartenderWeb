@@ -1,8 +1,22 @@
-import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material'
+
+import { useState, type MouseEvent } from 'react'
+import { AppBar, Box, Button, Menu, MenuItem, Toolbar } from '@mui/material'
 
 const navItems: string[] = ['Search', 'Add drink', 'Favourites Drinks', 'Account', 'Logout']
 
 export default function NavBar() {
+  //State to handle Menu dropwon on phones
+  const [dropEL, setDropEL] = useState<HTMLElement | null>(null)
+  const menuOpen = Boolean(dropEL)
+
+  const handleOpenMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    setDropEL(event.currentTarget)
+  }
+
+  const handleCloseMenu = () => {
+    setDropEL(null)
+  }
+  
     //BartenderApp as a title.
   return (
     <AppBar position="static" 
@@ -14,18 +28,39 @@ export default function NavBar() {
           height: '10vh',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-evenly'
+          justifyContent: 'space-evenly',
+          
         }}>
 
           <Button>
             Bartender
           </Button>
          
+         
+         {/*DESKTOP VERSION*/}
+         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
           {navItems.map((label) => (
-            <Button data-variant="nav">
+            <Button key={label} data-variant="nav">
               {label}
             </Button>
-          ))}         
+          ))} 
+        </Box>      
+
+        
+         {/*PHONE VERSION*/} 
+         <Box sx={{ display: { xs: 'inline-flex', md: 'none' } }}>
+          <Button data-variant="nav" onClick={handleOpenMenu}>
+            Menu
+          </Button>
+          
+          <Menu anchorEl={dropEL} open={menuOpen} onClose={handleCloseMenu}>
+            {navItems.map((label) => (
+              <MenuItem key={label} onClick={handleCloseMenu}>
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
+         </Box> 
           
 
       </Toolbar>

@@ -39,7 +39,7 @@ export default function NavBar() {
           
         }}>
 
-          <Button data-variant="nav" data-tone="main">
+          <Button component={RouterLink} to="/" data-variant="nav" data-tone="main">
             BartenderWeb
           </Button>
          

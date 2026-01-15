@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import { Container, Typography } from '@mui/material'
 import MissingIngredientCount from './ingredientsMissing'
+import VerifiedOnly from './verifiedOnly'
 
 export default function SearchDrinkPage() {
   const [missingCount, setMissingCount] = useState<number>(0)
+  const [verified, setVerified] = useState<boolean>(false)
 
   return (
     <Container sx={{ py: 4 }}>
 
       <MissingIngredientCount number={missingCount} setNumber={setMissingCount} />
 
-      <Typography >
-        Może brakować: {missingCount}
-      </Typography>
+      <VerifiedOnly verified = {verified} setVerified={setVerified}/>
+
+
     </Container>
   )
 }
@@ -33,5 +35,13 @@ export default function SearchDrinkPage() {
     -Menu ze składnikami:
       -okno wyszukiwania składniku po nazwie
       -okienko gdzie masz już zaznaczone (możesz wyczyścic i odznaczyć)
-      -ilu składnikow moze brakować
     */
+
+
+      /*
+      HTTP:
+      ile drinkow moze brakowac
+      jaka nazwa parametry
+      jakei skladniki
+      czy zweryfikowane
+      */

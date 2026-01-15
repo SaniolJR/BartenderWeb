@@ -11,9 +11,12 @@ const field = {
 export const theme = createTheme({
   palette: { 
     primary: {
-      main: '#eeee6c', // Twój kolor (np. zielony) zamiast niebieskiego
+      main: field.main,
     },
-    mode: 'dark' 
+    mode: 'dark',
+    text: {
+      primary: field.main, // basic color for text
+    },
   },
   
 
@@ -81,6 +84,15 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           color: 'rgba(238, 238, 108, 0.65)',
+        },
+      },
+    },
+
+     // CHECKBOXES
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: field.main, // basic borded color
         },
       },
     },

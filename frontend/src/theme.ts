@@ -24,7 +24,20 @@ export const theme = createTheme({
             color: '#9c9c00',
             paddingLeft: 16,
             paddingRight: 16,
+            '&:hover': {
+              backgroundColor: 'rgba(156,156,0,0.12)',
+              boxShadow: '0 0 10px #9c9c00',
+            },
+            fontSize: '2vh'
           },
+        },
+        {
+           props: { 'data-variant': 'nav', 'data-tone': 'main' } as any,
+            style: {
+              color: '#eeee6c',
+              '&:hover': { boxShadow: '0 0 12px #eeee6c)' },
+              fontSize: '3vh'
+            },
         }
       ]
 

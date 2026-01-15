@@ -32,8 +32,8 @@ export default function NavBar() {
           
         }}>
 
-          <Button>
-            Bartender
+          <Button data-variant="nav" data-tone="main">
+            BartenderWeb
           </Button>
          
          
@@ -49,7 +49,7 @@ export default function NavBar() {
         
          {/*PHONE VERSION*/} 
          <Box sx={{ display: { xs: 'inline-flex', md: 'none' } }}>
-          <Button data-variant="nav" onClick={handleOpenMenu}>
+          <Button data-variant="nav" data-tone="main" onClick={handleOpenMenu}>
             Menu
           </Button>
 

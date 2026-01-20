@@ -27,4 +27,13 @@ public class IngredientEndpoints(IIngredientService ingredientService) : Control
 
         return CreatedAtAction(nameof(GetIngredientById), new { id = ingredient.Id }, ingredient);
     }
+
+
+
+    [HttpGet]
+    public async Task<IActionResult> GetIngredients([FromQuery] GetIngredientsDTO dto)
+    {
+        var result = await ingredientService.GetIngredientsAsync(dto);
+        return Ok(result);
+    }
 }

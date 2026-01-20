@@ -6,5 +6,6 @@ namespace CA_Domain.Repositories
     {
         Task<Ingredient> GetIngredientByIdAsync(int id);
         Task<Ingredient> AddIngredientAsync(Ingredient ingredient);
+        Task<List<Ingredient>> GetIngredientsAsync(string filter);
     }
 }

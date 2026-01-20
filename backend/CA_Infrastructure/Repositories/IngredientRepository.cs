@@ -25,4 +25,13 @@ public class IngredientRepository : IIngredientRepository
         await _dbContext.SaveChangesAsync();
         return ingredient;
     }
+
+    public async
+        Task<List<Ingredient>> GetIngredientsAsync(string filter)
+    {
+        return await _dbContext.Ingredients
+        .Where(i => string.IsNullOrEmpty(filter) ||
+         i.Name.ToLower().Contains(filter.ToLower())) // name filrer
+        .ToListAsync();
+    }
 }

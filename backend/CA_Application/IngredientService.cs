@@ -16,6 +16,10 @@ internal class IngredientService(IIngredientRepository ingredientRepository, IMa
     {
         var ingredient = mapper.Map<Ingredient>(dto);
         return await ingredientRepository.AddIngredientAsync(ingredient);
+    }
 
+    public async Task<List<Ingredient>> GetIngredientsAsync(GetIngredientsDTO dto)
+    {
+        return await ingredientRepository.GetIngredientsAsync(dto.TextFilter);
     }
 }

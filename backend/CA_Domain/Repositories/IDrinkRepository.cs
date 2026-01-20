@@ -10,5 +10,6 @@ namespace CA_Domain.Repositories
                      int MissingIngredients, List<string> ingredients);
 
         Task<Ingredient> GetIngredientByNameAsync(string name);
+
     }
 }

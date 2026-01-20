@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using CA_Infrastructure.Repositories;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CA_Infrastructure.Tests
 {
@@ -20,7 +21,14 @@ namespace CA_Infrastructure.Tests
             using var context = new MainDbContext(options);
             var repository = new DrinkRepository(context);
 
-            var drink = new Drink { Name = "Test Drink", Receipe = "Vodka and Soda blyat" };
+            var drink = new Drink
+            {
+                Name = "Test Drink",
+                Receipe = "Vodka and Soda blyat",
+                Ingredients = new List<Ingredient>{
+                            new Ingredient {Name = "Vodka"},
+                            new Ingredient {Name = "Soda"}}
+            };
 
             // Act
             var result = await repository.AddDrinkAsync(drink);
@@ -41,7 +49,15 @@ namespace CA_Infrastructure.Tests
             using var context = new MainDbContext(options);
             var repository = new DrinkRepository(context);
 
-            var drink = new Drink { Id = 123, Name = "test Drink", Receipe = "drink it to test it" };
+            var drink = new Drink
+            {
+                Id = 123,
+                Name = "test Drink",
+                Receipe = "drink it to test it",
+                Ingredients = new List<Ingredient>{
+                                    new Ingredient {Name = "Vodka"},
+                                    new Ingredient {Name = "Polish Vodka"}}
+            };
             context.Drinks.Add(drink);
             await context.SaveChangesAsync();
 

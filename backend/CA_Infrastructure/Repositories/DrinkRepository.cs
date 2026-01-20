@@ -25,55 +25,51 @@ namespace CA_Infrastructure.Repositories
             return drink;
         }
 
-        public async Task<List<Drink>> GetDrinksAsync(bool Verified, string TextFilter,
-                     int MissingIngredients, List<string> Ingredients)
+        public async Task<List<Drink>> GetDrinksAsync(bool verified, string textFilter, int missingIngredients, List<string> inputIngredients)
         {
-            //getting drinks from DB
-            //using N;N relation between drinks and ingredients:
-            //   we can search from ingredients which drinks we should return
-            if (Ingredients == null || Ingredients.Count == 0)
+            // 1. Jeśli nie podano składników - prosta sprawa
+            if (inputIngredients == null || inputIngredients.Count == 0)
             {
                 return await _dbContext.Drinks
-                    .Where(d => (!Verified || d.Verified) &&
-                                (string.IsNullOrEmpty(TextFilter) || d.Name.Contains(TextFilter, StringComparison.OrdinalIgnoreCase)))
+                    .Include(d => d.Ingredients) // WAŻNE: Załaduj składniki, żeby frontend je widział
+                    .Where(d => (!verified || d.Verified) &&
+                                (string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())))
+                    // Uwaga: StringComparison w LINQ do SQL często rzuca błędem, bezpieczniej użyć ToLower()
                     .ToListAsync();
             }
 
-            var DrinksHavingIngredients = new Dictionary<Drink, int>();
+            // 2. Jeśli są składniki - Podejście Zoptymalizowane
+            // Pobieramy od razu wszystkie drinki, które zawierają PRZYNAJMNIEJ JEDEN z wymienionych składników
+            // To jest JEDNO zapytanie do bazy.
 
-            foreach (var ingName in Ingredients)
-            {
-                //get ingredient from DB
-                var ingFromDb = await GetIngredientByNameAsync(ingName);
-                if (ingFromDb == null || ingFromDb.Drinks == null)
-                    continue;
+            var candidates = await _dbContext.Drinks
+                .Include(d => d.Ingredients) // Ładujemy składniki drinka, żeby policzyć "brakujące"
+                .Where(d => (!verified || d.Verified)) // Filtr verified
+                .Where(d => string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())) // Filtr nazwy
+                .Where(d => d.Ingredients.Any(i => inputIngredients.Contains(i.Name))) // Tylko drinki, które mają coś z naszej listy
+                .ToListAsync();
 
-                //iterate through drinks 
-                foreach (var drink in ingFromDb.Drinks)
-                {
-                    //skip non-verified drinks for only-verified filter
-                    if (Verified && drink.Verified == false)
-                        continue;
-                    if (!string.IsNullOrEmpty(TextFilter) &&
-                        !drink.Name.Contains(TextFilter, StringComparison.OrdinalIgnoreCase))
-                        continue;
-                    if (!DrinksHavingIngredients.ContainsKey(drink))
-                    {
-                        DrinksHavingIngredients.Add(drink, 1);
-                    }
-                    else
-                    {
-                        DrinksHavingIngredients[drink]++;
-                    }
-                }
-            }
+            // 3. Logika filtrowania w pamięci (Memory)
+            // Skoro mamy już kandydatów w RAM-ie, liczymy brakujące składniki szybkim C#
+
             var result = new List<Drink>();
-            foreach (var obj in DrinksHavingIngredients)
+
+            // Zróbmy HashSet dla wydajności (szybsze sprawdzanie Contains)
+            var userIngredientsSet = new HashSet<string>(inputIngredients, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var drink in candidates)
             {
-                var drink = obj.Key;
-                var cnt = obj.Value;
-                if (drink.Ingredients.Count - cnt <= MissingIngredients)
+                // Ile składników tego drinka user POSIADA?
+                int havingCount = drink.Ingredients.Count(i => userIngredientsSet.Contains(i.Name));
+
+                // Ile brakuje? (Wszystkie wymagane - te co mamy)
+                int missingCount = drink.Ingredients.Count - havingCount;
+
+                // Sprawdzamy warunek (np. brakuje max 2)
+                if (missingCount <= missingIngredients)
+                {
                     result.Add(drink);
+                }
             }
 
             return result;

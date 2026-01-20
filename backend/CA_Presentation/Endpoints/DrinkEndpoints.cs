@@ -23,12 +23,17 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
     public async Task<IActionResult> AddDrink([FromBody] AddDrinkDTO dto)
     {
         var drink = await drinkService.AddDrinkAsync(dto);
+        if (dto.Ingredients == null || dto.Ingredients.Count < 2)
+        {
+            return BadRequest("Drink must have at least 2 ingredients.");
+        }
         return CreatedAtAction(nameof(GetDrinkById), new { id = drink.Id }, drink);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDrinks([FromBody] GetDrinksDTO dto)
+    public async Task<IActionResult> GetDrinks([FromQuery] GetDrinksDTO dto)
     {
-        var result = await drinkService.GetDrinksAsync()
+        var result = await drinkService.GetDrinksAsync(dto);
+        return Ok(result);
     }
 }

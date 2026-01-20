@@ -16,5 +16,20 @@ namespace CA_Application
             var drink = mapper.Map<Drink>(dto);
             return await drinkRepository.AddDrinkAsync(drink);
         }
+
+        public async Task<List<Drink>> GetDrinksAsync(GetDrinksDTO dto)
+        {
+            return await drinkRepository.GetDrinksAsync(
+                dto.Verified,
+                dto.TextFilter,
+                dto.MissingIngredients,
+                dto.Ingredients ?? new List<string>()
+            );
+        }
+
+        public async Task<Ingredient> GetIngredientByNameAsync(string name)
+        {
+            return await drinkRepository.GetIngredientByNameAsync(name);
+        }
     }
 }

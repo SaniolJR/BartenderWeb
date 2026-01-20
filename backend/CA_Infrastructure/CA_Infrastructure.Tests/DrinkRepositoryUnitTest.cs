@@ -20,7 +20,16 @@ public class DrinkRepositoryUnitTest
         mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
 
         var repository = new DrinkRepository(mockContext.Object);
-        var drink = new Drink { Name = "Test Drink", Receipe = "test receipe" };
+        var drink = new Drink
+        {
+            Name = "Test Drink",
+            Receipe = "test receipe",
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Rum" },
+                new Ingredient { Name = "Cola" }
+            }
+        };
 
         // Act
         var result = await repository.AddDrinkAsync(drink);
@@ -40,7 +49,16 @@ public class DrinkRepositoryUnitTest
         mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
 
         var repository = new DrinkRepository(mockContext.Object);
-        var drink = new Drink { Id = 123, Name = "Test Drink", Receipe = "test receipe" };
+        var drink = new Drink
+        {
+            Name = "Test Drink",
+            Receipe = "test receipe",
+            Ingredients = new List<Ingredient>
+            {
+                new Ingredient { Name = "Rum" },
+                new Ingredient { Name = "Cola" }
+            }
+        };
 
         // Act
         var result = await repository.GetDrinkByIdAsync(123);

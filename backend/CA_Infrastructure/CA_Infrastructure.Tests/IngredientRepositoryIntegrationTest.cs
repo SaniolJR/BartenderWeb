@@ -41,7 +41,6 @@ public class IngredientRepositoryIntegrationTests
         var dbContext = GetDbContext();
         var ingredient = new Ingredient { Name = "Ice" };
         dbContext.Ingredients.Add(ingredient);
-        await dbContext.SaveChangesAsync();
         var repo = new IngredientRepository(dbContext);
 
         // Act
@@ -51,4 +50,89 @@ public class IngredientRepositoryIntegrationTests
         Assert.NotNull(result);
         Assert.Equal("Ice", result.Name);
     }
+
+    [Fact]
+    public async Task GetIngredientsAsync_ReturnsAllIngredients()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var dbContext = new MainDbContext(options);
+
+        var i1 = new Ingredient { Name = "Ice" };
+        var i2 = new Ingredient { Name = "Whisky" };
+        var i3 = new Ingredient { Name = "Cola" };
+
+        dbContext.Ingredients.Add(i1);
+        dbContext.Ingredients.Add(i2);
+        dbContext.Ingredients.Add(i3);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new IngredientRepository(dbContext);
+
+        // Act
+        var result = await repo.GetIngredientsAsync("");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+    }
+
+    public async Task GetIngredientsAsync_ReturnsFilteredIndegredients()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var dbContext = new MainDbContext(options);
+
+        var i1 = new Ingredient { Name = "Ice" };
+        var i2 = new Ingredient { Name = "Whisky" };
+        var i3 = new Ingredient { Name = "Cola" };
+
+        dbContext.Ingredients.Add(i1);
+        dbContext.Ingredients.Add(i2);
+        dbContext.Ingredients.Add(i3);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new IngredientRepository(dbContext);
+
+        // Act
+        var result = await repo.GetIngredientsAsync("i");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+    }
+
+    public async Task GetIngredientsAsync_ReturnsNull()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var dbContext = new MainDbContext(options);
+
+        var i1 = new Ingredient { Name = "Ice" };
+        var i2 = new Ingredient { Name = "Whisky" };
+        var i3 = new Ingredient { Name = "Cola" };
+
+        dbContext.Ingredients.Add(i1);
+        dbContext.Ingredients.Add(i2);
+        dbContext.Ingredients.Add(i3);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new IngredientRepository(dbContext);
+
+        // Act
+        var result = await repo.GetIngredientsAsync("Vodka");
+
+        // Assert
+        Assert.Null(result);
+    }
+
 }

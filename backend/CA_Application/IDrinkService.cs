@@ -9,5 +9,7 @@ namespace CA_Application
     {
         Task<Drink> GetDrinkByIdAsync(int id);
         Task<Drink> AddDrinkAsync(AddDrinkDTO dto);
+
+        Task<List<Drink>> GetDrinksAsync(GetDrinksDTO dto);
     }
 }

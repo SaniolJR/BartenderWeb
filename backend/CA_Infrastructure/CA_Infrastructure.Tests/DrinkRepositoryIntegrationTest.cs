@@ -53,5 +53,137 @@ namespace CA_Infrastructure.Tests
             Assert.Equal("test Drink", output.Name);
             Assert.Single(context.Drinks);
         }
+
+        [Fact]
+        public async Task GetIngredientByNameAsync_ExistingDrink_PerfectFittingName_ReturnDrink()
+        {
+            //Arrage
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "TestDb3")
+            .Options;
+            using var context = new MainDbContext(options);
+            var repository = new DrinkRepository(context);
+
+            var ingredient = new Ingredient { Id = 1, Name = "Cola" };
+            context.Ingredients.Add(ingredient);
+            await context.SaveChangesAsync();
+
+            //Act
+            var output = await repository.GetIngredientByNameAsync("Cola");
+
+            //Assert
+            Assert.NotNull(output);
+            Assert.Equal(ingredient.Name, output.Name);
+            Assert.Single(context.Ingredients);
+        }
+
+        [Fact]
+        public async Task GetIngredientByNameAsync_ExistingDrink_NonerfectFittingName_ReturnDrink()
+        {
+            //Arrage
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "TestDb4")
+            .Options;
+            using var context = new MainDbContext(options);
+            var repository = new DrinkRepository(context);
+
+            var ingredient = new Ingredient { Id = 1, Name = "Cola" };
+            context.Ingredients.Add(ingredient);
+            await context.SaveChangesAsync();
+
+            //Act
+            var output = await repository.GetIngredientByNameAsync("cola");
+
+            //Assert
+            Assert.NotNull(output);
+            Assert.Equal(ingredient.Name, output.Name);
+            Assert.Single(context.Ingredients);
+        }
+
+        [Fact]
+        public async Task GetIngredientByNameAsync_NonExistingDrink_ReturnFalse()
+        {
+            //Arrage
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "TestDb5")
+            .Options;
+            using var context = new MainDbContext(options);
+            var repository = new DrinkRepository(context);
+
+            var ingredient = new Ingredient { Id = 1, Name = "Cola" };
+            context.Ingredients.Add(ingredient);
+            await context.SaveChangesAsync();
+
+            //Act
+            var output = await repository.GetIngredientByNameAsync("Pepsi");
+
+            //Assert
+            Assert.Null(output);
+            Assert.Single(context.Ingredients);
+        }
+
+        [Fact]
+        public async Task GetDrinksAsync_FiltersByVerifiedAndTextFilter_ReturnsCorrectDrinks()
+        {
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDbGetDrinksAsync1")
+                .Options;
+            using var context = new MainDbContext(options);
+            var repo = new DrinkRepository(context);
+
+            var drink1 = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true };
+            var drink2 = new Drink { Name = "Cola Drink", Receipe = "Cola", Verified = false };
+            context.Drinks.AddRange(drink1, drink2);
+            await context.SaveChangesAsync();
+
+            var result = await repo.GetDrinksAsync(true, "Mojito", 0, new List<string>());
+            Assert.Single(result);
+            Assert.Equal("Mojito", result[0].Name);
+            Assert.True(result[0].Verified);
+        }
+
+        [Fact]
+        public async Task GetDrinksAsync_FiltersByIngredients_ReturnsCorrectDrinks()
+        {
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDbGetDrinksAsync2")
+                .Options;
+            using var context = new MainDbContext(options);
+            var repo = new DrinkRepository(context);
+
+            var ingredient = new Ingredient { Name = "Rum" };
+            var drink = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient } };
+            ingredient.Drinks.Add(drink);
+            context.Ingredients.Add(ingredient);
+            context.Drinks.Add(drink);
+            await context.SaveChangesAsync();
+
+            var result = await repo.GetDrinksAsync(true, "", 0, new List<string> { "Rum" });
+            Assert.Single(result);
+            Assert.Equal("Mojito", result[0].Name);
+        }
+
+        [Fact]
+        public async Task GetDrinksAsync_FiltersByMissingIngredients_ReturnsCorrectDrinks()
+        {
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDbGetDrinksAsync3")
+                .Options;
+            using var context = new MainDbContext(options);
+            var repo = new DrinkRepository(context);
+
+            var ingredient1 = new Ingredient { Name = "Rum" };
+            var ingredient2 = new Ingredient { Name = "Mint" };
+            var drink = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient1, ingredient2 } };
+            ingredient1.Drinks.Add(drink);
+            ingredient2.Drinks.Add(drink);
+            context.Ingredients.AddRange(ingredient1, ingredient2);
+            context.Drinks.Add(drink);
+            await context.SaveChangesAsync();
+
+            var result = await repo.GetDrinksAsync(true, "", 1, new List<string> { "Rum" });
+            Assert.Single(result);
+            Assert.Equal("Mojito", result[0].Name);
+        }
     }
 }

@@ -31,13 +31,20 @@ namespace CA_Infrastructure.Repositories
             //getting drinks from DB
             //using N;N relation between drinks and ingredients:
             //   we can search from ingredients which drinks we should return
+            if (Ingredients == null || Ingredients.Count == 0)
+            {
+                return await _dbContext.Drinks
+                    .Where(d => (!Verified || d.Verified) &&
+                                (string.IsNullOrEmpty(TextFilter) || d.Name.Contains(TextFilter, StringComparison.OrdinalIgnoreCase)))
+                    .ToListAsync();
+            }
 
             var DrinksHavingIngredients = new Dictionary<Drink, int>();
 
             foreach (var ingName in Ingredients)
             {
                 //get ingredient from DB
-                var ingFromDb = await _dbContext.Ingredients.FirstOrDefaultAsync(i => i.Name == ingName);
+                var ingFromDb = await GetIngredientByNameAsync(ingName);
                 if (ingFromDb == null || ingFromDb.Drinks == null)
                     continue;
 
@@ -68,12 +75,15 @@ namespace CA_Infrastructure.Repositories
                 if (drink.Ingredients.Count - cnt <= MissingIngredients)
                     result.Add(drink);
             }
+
             return result;
         }
 
-        async Task<Ingredient> GetIngredientByNameAsync(string name)
+
+        public async Task<Ingredient> GetIngredientByNameAsync(string name)
         {
-            return await _dbContext.Ingredients.FirstOrDefaultAsync(i => i.Name == name);
+            return await _dbContext.Ingredients
+                .FirstOrDefaultAsync(i => i.Name.ToLower() == name.ToLower());
         }
     }
 }

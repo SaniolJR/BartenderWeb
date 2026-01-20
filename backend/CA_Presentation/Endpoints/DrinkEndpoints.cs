@@ -25,4 +25,10 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
         var drink = await drinkService.AddDrinkAsync(dto);
         return CreatedAtAction(nameof(GetDrinkById), new { id = drink.Id }, drink);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDrinks([FromBody] GetDrinksDTO dto)
+    {
+        var result = await drinkService.GetDrinksAsync()
+    }
 }

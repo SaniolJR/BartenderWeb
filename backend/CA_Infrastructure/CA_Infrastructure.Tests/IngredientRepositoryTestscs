@@ -1,0 +1,92 @@
+using Xunit;
+using CA_Domain.Entities;
+using CA_Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+using CA_Infrastructure.Repositories;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
+
+namespace CA_Infrastructure.Tests;
+
+public class IngredientRepositoryUnitTests
+{
+    [Fact]
+    public async Task GetIngredientByIdAsync_ReturnsIngredient_True()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<Drink>>();
+        var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+        mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
+
+        var repository = new DrinkRepository(mockContext.Object);
+        var ingredient = new Ingredient { Id = 123, Name = "Sugar" };
+
+        // Act
+        var result = await repository.GetIngredientById(123);
+
+        // Assert
+        mockSet.Verify(m => m.Add(It.IsAny<Drink>()), Times.Once);
+        mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal(ingredient.Name, result.Name);
+    }
+
+    [Fact]
+    public async Task GetIngredientByIdAsync_ReturnsIngredient_False()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<Drink>>();
+        var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+        mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
+
+        var repository = new DrinkRepository(mockContext.Object);
+        var ingredient = new Ingredient { Id = 123, Name = "Cola" };
+
+        // Act
+        var result = await repository.GetIngredientById(18);
+
+        // Assert
+        mockSet.Verify(m => m.Add(It.IsAny<Drink>()), Times.Once);
+        mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AddIngredientAsync_AddsAndReturnsIngredient()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<Drink>>();
+        var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+        mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
+
+        var repository = new DrinkRepository(mockContext.Object);
+
+        // Act
+        var result = await repository.AddIngredient(Name = "Cola");
+
+        // Assert
+        mockSet.Verify(m => m.Add(It.IsAny<Drink>()), Times.Once);
+        mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal(ingredient.Name, result.Name);
+    }
+
+    [Fact]
+    public async Task AddIngredientAsync_AddsAndReturnsNull()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<Drink>>();
+        var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+        mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
+
+        var repository = new DrinkRepository(mockContext.Object);
+
+        // Act
+        var result = await repository.AddIngredient(Name = 111);
+
+        // Assert
+        mockSet.Verify(m => m.Add(It.IsAny<Drink>()), Times.Once);
+        mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Null(result);
+    }
+
+}

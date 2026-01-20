@@ -31,7 +31,7 @@ public class IngredientRepository : IIngredientRepository
     {
         return await _dbContext.Ingredients
         .Where(i => string.IsNullOrEmpty(filter) ||
-         i.Name.ToLower().Contains(filter.ToLower())) // name filrer
+         i.Name.ToLower().Contains(filter.ToLower())) // name filter
         .ToListAsync();
     }
 }

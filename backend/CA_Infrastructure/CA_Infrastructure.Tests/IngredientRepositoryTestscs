@@ -130,5 +130,95 @@ namespace CA_Infrastructure.Tests
             Assert.Equal("Mint", output.Name);
             Assert.Equal(addedIngredient.Id, output.Id);
         }
+
+        [Fact]
+        public async Task GetIngredientsAsync_WithEmptyFilter_ReturnsAllIngredients()
+        {
+            // Arrange
+            var ingredients = new List<Ingredient>
+            {
+                new Ingredient { Id = 1, Name = "Rum" },
+                new Ingredient { Id = 2, Name = "Cola" },
+                new Ingredient { Id = 3, Name = "Lime" }
+            }.AsQueryable();
+
+            var mockSet = new Mock<DbSet<Ingredient>>();
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Provider).Returns(ingredients.Provider);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Expression).Returns(ingredients.Expression);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.ElementType).Returns(ingredients.ElementType);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.GetEnumerator()).Returns(ingredients.GetEnumerator());
+
+            var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+            mockContext.Setup(m => m.Ingredients).Returns(mockSet.Object);
+
+            var repository = new IngredientRepository(mockContext.Object);
+
+            // Act
+            var result = await repository.GetIngredientsAsync("");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count);
+        }
+
+        [Fact]
+        public async Task GetIngredientsAsync_WithFilter_ReturnsFilteredIngredients()
+        {
+            // Arrange
+            var ingredients = new List<Ingredient>
+            {
+                new Ingredient { Id = 1, Name = "Rum" },
+                new Ingredient { Id = 2, Name = "Cola" },
+                new Ingredient { Id = 3, Name = "Lime" }
+            }.AsQueryable();
+
+            var mockSet = new Mock<DbSet<Ingredient>>();
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Provider).Returns(ingredients.Provider);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Expression).Returns(ingredients.Expression);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.ElementType).Returns(ingredients.ElementType);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.GetEnumerator()).Returns(ingredients.GetEnumerator());
+
+            var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+            mockContext.Setup(m => m.Ingredients).Returns(mockSet.Object);
+
+            var repository = new IngredientRepository(mockContext.Object);
+
+            // Act
+            var result = await repository.GetIngredientsAsync("Rum");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal("Rum", result[0].Name);
+        }
+
+        [Fact]
+        public async Task GetIngredientsAsync_WithNonExistingFilter_ReturnsEmptyList()
+        {
+            // Arrange
+            var ingredients = new List<Ingredient>
+            {
+                new Ingredient { Id = 1, Name = "Rum" },
+                new Ingredient { Id = 2, Name = "Cola" }
+            }.AsQueryable();
+
+            var mockSet = new Mock<DbSet<Ingredient>>();
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Provider).Returns(ingredients.Provider);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.Expression).Returns(ingredients.Expression);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.ElementType).Returns(ingredients.ElementType);
+            mockSet.As<IQueryable<Ingredient>>().Setup(m => m.GetEnumerator()).Returns(ingredients.GetEnumerator());
+
+            var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
+            mockContext.Setup(m => m.Ingredients).Returns(mockSet.Object);
+
+            var repository = new IngredientRepository(mockContext.Object);
+
+            // Act
+            var result = await repository.GetIngredientsAsync("Vodka");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
     }
 }

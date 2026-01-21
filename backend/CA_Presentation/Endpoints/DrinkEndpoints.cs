@@ -22,12 +22,24 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddDrink([FromBody] AddDrinkDTO dto)
     {
-        var drink = await drinkService.AddDrinkAsync(dto);
-        if (dto.Ingredients == null || dto.Ingredients.Count < 2)
+        try
         {
-            return BadRequest("Drink must have at least 2 ingredients.");
+            // Cała "brudna robota" dzieje się w środku
+            var id = await drinkService.AddDrinkAsync(dto);
+
+            // Zwracamy 201 Created
+            return CreatedAtAction(nameof(GetDrinkById), new { id = id }, null);
         }
-        return CreatedAtAction(nameof(GetDrinkById), new { id = drink.Id }, drink);
+        catch (ArgumentException ex)
+        {
+            // Jeśli walidacja w serwisie nie przeszła (brak składników, za mało itp.)
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Inne błędy (np. baza padła)
+            return StatusCode(500, "Server Error.");
+        }
     }
 
     [HttpGet]

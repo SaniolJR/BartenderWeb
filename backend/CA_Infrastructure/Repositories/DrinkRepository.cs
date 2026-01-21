@@ -20,6 +20,7 @@ namespace CA_Infrastructure.Repositories
         }
         public async Task<Drink> AddDrinkAsync(Drink drink)
         {
+            //EF automatically should add that Drink to all Ingredients.Drinks lists!
             _dbContext.Drinks.Add(drink);
             await _dbContext.SaveChangesAsync();
             return drink;
@@ -76,5 +77,16 @@ namespace CA_Infrastructure.Repositories
             return await _dbContext.Ingredients
                 .FirstOrDefaultAsync(i => i.Name.ToLower() == name.ToLower());
         }
+
+        public async Task<List<Ingredient>> GetIngredientsByNamesAsync(List<string> names)
+        {
+            var namesLower = names.Select(n => n.ToLower()).Distinct().ToList();
+
+            // only one SQL query
+            return await _dbContext.Ingredients
+                .Where(i => namesLower.Contains(i.Name.ToLower()))
+                .ToListAsync();
+        }
+
     }
 }

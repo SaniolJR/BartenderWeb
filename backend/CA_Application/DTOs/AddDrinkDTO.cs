@@ -14,6 +14,6 @@ namespace CA_Application.DTOs
 
         [Required(ErrorMessage = "Cant drink air!")]
         [MinLength(2, ErrorMessage = "Drink must have at least 2 ingredients!")]
-        public List<Ingredient> Ingredients { get; set; } = default!;
+        public List<string> Ingredients { get; set; } = default!;
     }
 }

@@ -80,7 +80,7 @@ public class IngredientRepositoryIntegrationTests
         Assert.Equal(3, result.Count);
     }
 
-    public async Task GetIngredientsAsync_ReturnsFilteredIndegredients()
+    public async Task GetIngredientsAsync_ReturnsFilteredIngredients()
     {
         // Arrange
         var options = new DbContextOptionsBuilder<MainDbContext>()

@@ -9,7 +9,9 @@ namespace CA_Application.DTOs
         //For adding drink
         public DrinkProfile()
         {
-            CreateMap<AddDrinkDTO, Drink>();
+            //mapper ignores Ingredients, beacause dto have only names (string)
+            CreateMap<AddDrinkDTO, Drink>()
+            .ForMember(dest => dest.Ingredients, opt => opt.Ignore());
         }
     }
 }

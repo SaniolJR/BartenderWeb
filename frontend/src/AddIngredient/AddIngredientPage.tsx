@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Container, TextField, Button, Typography, Box } from '@mui/material'
 
+const apiUrl = import.meta.env.VITE_API_URL
+
 export default function AddIngredientPage() {
     //usestate for name
   const [ingredientName, setIngredientName] = useState<string>("")
@@ -10,7 +12,7 @@ export default function AddIngredientPage() {
 
   const handleAdd = async () => {
   try {
-    const res = await fetch('url', {
+    const res = await fetch(`${apiUrl}/ingredient`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: ingredientName }),
@@ -20,7 +22,7 @@ export default function AddIngredientPage() {
         setMessage('✅ Ingredient added!')
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
-    setMessage(`❌ Cannot added Ingredient, sorry sth is wrong: ${msg}`)
+    setMessage(`❌ Cannot added Ingredient, sorry something is wrong: ${msg}`)
   }
 }
 
@@ -38,7 +40,7 @@ export default function AddIngredientPage() {
         ✨ Add a new ingredient 🍋🥃
     </Typography>
 
-    {/*TEXTFIELD FOR TYPE NAME OF DRINK*/}
+    {/*TEXTFIELD FOR TYPE NAME OF INGREDIENT*/}
       <TextField
             label="Ingredient name"
             value={ingredientName}

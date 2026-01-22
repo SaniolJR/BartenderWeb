@@ -12,13 +12,14 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// rejestracja serwisów z Application i Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
 builder.Host.UseSerilog((context, configuration) =>
     configuration
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)

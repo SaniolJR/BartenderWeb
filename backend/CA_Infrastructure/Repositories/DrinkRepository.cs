@@ -26,7 +26,8 @@ namespace CA_Infrastructure.Repositories
             return drink;
         }
 
-        public async Task<List<Drink>> GetDrinksAsync(bool verified, string textFilter, int missingIngredients, List<string> inputIngredients)
+        public async Task<List<Drink>> GetDrinksAsync(bool verified, string textFilter,
+                int missingIngredients, List<string> inputIngredients, int page, int pageSize)
         {
             //if no ingredients
             if (inputIngredients == null || inputIngredients.Count == 0)
@@ -68,7 +69,11 @@ namespace CA_Infrastructure.Repositories
                 }
             }
 
-            return result;
+            //pagination
+            return result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
         }
 
 

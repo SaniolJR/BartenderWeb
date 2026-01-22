@@ -7,7 +7,7 @@ namespace CA_Domain.Repositories
         Task<Drink> GetDrinkByIdAsync(int id);
         Task<Drink> AddDrinkAsync(Drink drink);
         Task<List<Drink>> GetDrinksAsync(bool Verified, string TextFilter,
-                     int MissingIngredients, List<string> ingredients);
+                     int MissingIngredients, List<string> ingredients, int page, int pageSize);
 
         Task<Ingredient> GetIngredientByNameAsync(string name);
         Task<List<Ingredient>> GetIngredientsByNamesAsync(List<string> names);

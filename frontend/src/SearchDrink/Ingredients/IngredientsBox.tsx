@@ -10,6 +10,7 @@ export default function IngredientsBox() {
       minHeight: '400px'
     }}>
       <h3>Ingredients</h3>
+      
     </Box>
   )
 }

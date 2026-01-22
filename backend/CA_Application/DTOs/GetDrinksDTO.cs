@@ -7,5 +7,7 @@ namespace CA_Application.DTOs
         public string TextFilter { get; set; } = string.Empty;
         public int MissingIngredients { get; set; } = 0;
         public List<string> Ingredients { get; set; } = new List<string>();
+        public int PageSize { get; set; } = 20;
+        public int Page { get; set; } = 0;
     }
 }

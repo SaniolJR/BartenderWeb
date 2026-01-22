@@ -20,6 +20,6 @@ internal class IngredientService(IIngredientRepository ingredientRepository, IMa
 
     public async Task<List<Ingredient>> GetIngredientsAsync(GetIngredientsDTO dto)
     {
-        return await ingredientRepository.GetIngredientsAsync(dto.TextFilter);
+        return await ingredientRepository.GetIngredientsAsync(dto.TextFilter, Math.Max(dto.Page, 1), dto.PageSize);
     }
 }

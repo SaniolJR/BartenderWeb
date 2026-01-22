@@ -40,11 +40,14 @@ namespace CA_Application
 
         public async Task<List<Drink>> GetDrinksAsync(GetDrinksDTO dto)
         {
+
             return await drinkRepository.GetDrinksAsync(
                 dto.Verified,
                 dto.TextFilter,
                 dto.MissingIngredients,
-                dto.Ingredients ?? new List<string>()
+                dto.Ingredients ?? new List<string>(),
+                Math.Max(dto.Page, 1),
+                dto.PageSize
             );
         }
 

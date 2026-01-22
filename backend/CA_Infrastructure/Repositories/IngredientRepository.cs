@@ -27,11 +27,13 @@ public class IngredientRepository : IIngredientRepository
     }
 
     public async
-        Task<List<Ingredient>> GetIngredientsAsync(string filter)
+        Task<List<Ingredient>> GetIngredientsAsync(string filter, int page, int pageSize)
     {
         return await _dbContext.Ingredients
         .Where(i => string.IsNullOrEmpty(filter) ||
          i.Name.ToLower().Contains(filter.ToLower())) // name filter
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
         .ToListAsync();
     }
 }

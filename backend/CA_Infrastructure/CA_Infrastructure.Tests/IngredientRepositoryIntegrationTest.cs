@@ -73,7 +73,7 @@ public class IngredientRepositoryIntegrationTests
         var repo = new IngredientRepository(dbContext);
 
         // Act
-        var result = await repo.GetIngredientsAsync("");
+        var result = await repo.GetIngredientsAsync("", 0, 20);
 
         // Assert
         Assert.NotNull(result);
@@ -101,7 +101,7 @@ public class IngredientRepositoryIntegrationTests
         var repo = new IngredientRepository(dbContext);
 
         // Act
-        var result = await repo.GetIngredientsAsync("i");
+        var result = await repo.GetIngredientsAsync("i", 0, 20);
 
         // Assert
         Assert.NotNull(result);
@@ -129,7 +129,7 @@ public class IngredientRepositoryIntegrationTests
         var repo = new IngredientRepository(dbContext);
 
         // Act
-        var result = await repo.GetIngredientsAsync("Vodka");
+        var result = await repo.GetIngredientsAsync("Vodka", 0, 20);
 
         // Assert
         Assert.Null(result);

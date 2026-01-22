@@ -152,7 +152,7 @@ namespace CA_Infrastructure.Tests
             context.Drinks.AddRange(drink1, drink2);
             await context.SaveChangesAsync();
 
-            var result = await repo.GetDrinksAsync(true, "Mojito", 0, new List<string>());
+            var result = await repo.GetDrinksAsync(true, "Mojito", 0, new List<string>(), 0, 20);
             Assert.Single(result);
             Assert.Equal("Mojito", result[0].Name);
             Assert.True(result[0].Verified);
@@ -174,7 +174,7 @@ namespace CA_Infrastructure.Tests
             context.Drinks.Add(drink);
             await context.SaveChangesAsync();
 
-            var result = await repo.GetDrinksAsync(true, "", 0, new List<string> { "Rum" });
+            var result = await repo.GetDrinksAsync(true, "", 0, new List<string> { "Rum" }, 0, 20);
             Assert.Single(result);
             Assert.Equal("Mojito", result[0].Name);
         }
@@ -197,7 +197,7 @@ namespace CA_Infrastructure.Tests
             context.Drinks.Add(drink);
             await context.SaveChangesAsync();
 
-            var result = await repo.GetDrinksAsync(true, "", 1, new List<string> { "Rum" });
+            var result = await repo.GetDrinksAsync(true, "", 1, new List<string> { "Rum" }, 0, 20);
             Assert.Single(result);
             Assert.Equal("Mojito", result[0].Name);
         }

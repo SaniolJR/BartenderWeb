@@ -6,6 +6,8 @@ using CA_Application.Extensions;
 using CA_Application.DTOs;
 using CA_Application;
 using Middlewares;
+using Serilog;
+using Serilog.Events;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,12 +19,29 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Host.UseSerilog((context, configuration) =>
+    configuration
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+        .WriteTo.Console()
+);
 
 builder.Services.AddAutoMapper(typeof(DrinkProfile).Assembly);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseSerilogRequestLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -33,6 +52,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.MapControllers();
 
 app.Run();

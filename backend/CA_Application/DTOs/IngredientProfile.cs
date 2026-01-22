@@ -9,7 +9,7 @@ namespace CA_Application.DTOs
         //For adding drink
         public IngredientProfile()
         {
-            CreateMap<AddDrinkDTO, Drink>();
+            CreateMap<AddIngredientDTO, Ingredient>();
         }
     }
 }

@@ -8,8 +8,9 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         {
             await next.Invoke(context);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Unhandled exception occurred while processing request.");
             context.Response.StatusCode = 500;
             await context.Response.WriteAsync("Sorry, something went wrong :/");
         }

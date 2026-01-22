@@ -1,21 +1,39 @@
 import { useState } from 'react'
-import { Container, Grid, Paper, Typography, Box } from '@mui/material'
+import { Container, Grid, Paper, Button, Box } from '@mui/material'
 import MissingIngredientCount from './ingredientsMissing'
 import VerifiedOnly from './verifiedOnly'
 import SearchByText from './searchByText.tsx'
 import IngredientsBox from './Ingredients/IngredientsBox'
 
-export default function SearchDrinkPage() {
-  const [missingCount, setMissingCount] = useState<number>(0)
-  const [verified, setVerified] = useState<boolean>(false)
-  const [textFilter, setTextFilter] = useState<string>("")
-  //usestate for selected ingredients
-   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
 
-  //temporary send http simulator
-  const getDrinks = () => {
-    console.log({ missingCount, verified, textFilter }) 
-  }
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  export default function SearchDrinkPage() {
+    const [missingCount, setMissingCount] = useState<number>(0)
+    const [verified, setVerified] = useState<boolean>(false)
+    const [textFilter, setTextFilter] = useState<string>("")
+    //usestate for selected ingredients
+    const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
+
+    const getDrinks = async () => {
+    const url = new URL(`${apiUrl}/drinks`);
+    url.searchParams.append("Verified", String(verified));
+    url.searchParams.append("TextFilter", textFilter);
+    url.searchParams.append("MissingIngredients", String(missingCount));
+    url.searchParams.append("PageSize", "20");
+    url.searchParams.append("Page", "1");
+    selectedIngredients.forEach(ing => url.searchParams.append("Ingredients", ing));
+
+    try {
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("Server error: " + res.status);
+      const data = await res.json();
+      console.log("Drinks response:", data);
+      // tutaj możesz ustawić stan z drinkami, jeśli chcesz je wyświetlić
+    } catch (err) {
+      alert("Błąd pobierania drinków: " + (err as Error).message);
+    }
+  };
 
  return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -37,6 +55,7 @@ export default function SearchDrinkPage() {
                 setTextFilter={setTextFilter} 
                 onSearch={getDrinks}
             />
+            <Button onClick={getDrinks}>Apply filters</Button>
           </Paper>
         </Grid>
 
@@ -58,7 +77,7 @@ export default function SearchDrinkPage() {
         <Grid size={{xs: 12, md: 9 }} >
           <Paper sx={{ p: 2,height: '70vh', bgcolor: '#3e010148' }}>
           
-
+    {selectedIngredients}
 
           </Paper>
         </Grid>

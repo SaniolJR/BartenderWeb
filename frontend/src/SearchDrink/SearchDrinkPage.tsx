@@ -88,7 +88,7 @@ import IngredientsBox from './Ingredients/IngredientsBox'
           {drinksCache.map((drink, idx) => (
             <Button
               key={drink.id || idx}
-              href="url"
+              href={`/drink/${drink.id}`}
               variant="outlined"
               sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
             >

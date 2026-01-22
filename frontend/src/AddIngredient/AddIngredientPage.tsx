@@ -5,12 +5,29 @@ export default function AddIngredientPage() {
     //usestate for name
   const [ingredientName, setIngredientName] = useState<string>("")
 
-  const handleAdd = () => {
-    console.log({ ingredientName })
+  //usestate for return message after add attempt
+  const [message, setMessage] = useState<string | null>(null)
+
+  const handleAdd = async () => {
+  try {
+    const res = await fetch('url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: ingredientName }),
+    })
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        setMessage('✅ Ingredient added!')
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error'
+    setMessage(`❌ Cannot added Ingredient, sorry sth is wrong: ${msg}`)
   }
+}
 
   return (
     <Container sx={{ py: 4 }}>
+
+        {/*WELCOME MESSAGE*/}
     <Typography
         sx={{ 
             mt: '0.5vh',
@@ -20,6 +37,8 @@ export default function AddIngredientPage() {
         >
         ✨ Add a new ingredient 🍋🥃
     </Typography>
+
+    {/*TEXTFIELD FOR TYPE NAME OF DRINK*/}
       <TextField
             label="Ingredient name"
             value={ingredientName}
@@ -41,6 +60,8 @@ export default function AddIngredientPage() {
                 }
             }}
         />
+
+        {/*BUTTON FOR ADD - AFTER CLICK IT TUN POST HTTP */}
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Button 
                 onClick={handleAdd} 
@@ -55,6 +76,13 @@ export default function AddIngredientPage() {
                 Add
             </Button>
         </Box>
+        
+        {/*MESSAGE BOX FOR SERVER RESPONSE*/}
+        {message && (
+        <Typography sx={{ mt: 2, textAlign: 'center', fontSize: '3rem' }}>
+            {message}
+        </Typography>
+        )}
     </Container>
   )
 }

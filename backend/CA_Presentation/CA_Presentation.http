@@ -9,7 +9,7 @@ Content-Type: application/json
 
 {
   "Name": "Whisky - Cola",
-  "Receipe": "Pour 40ml of Whisky in 250ml glass, and 160ml of CocaCola. Add some Ice."
+  "Recipe": "Pour 40ml of Whisky in 250ml glass, and 160ml of CocaCola. Add some Ice."
 }
 
 ###

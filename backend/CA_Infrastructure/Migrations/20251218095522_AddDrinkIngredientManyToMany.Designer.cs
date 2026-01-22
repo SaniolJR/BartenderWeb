@@ -36,7 +36,7 @@ namespace CA_Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Receipe")
+                    b.Property<string>("Recipe")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

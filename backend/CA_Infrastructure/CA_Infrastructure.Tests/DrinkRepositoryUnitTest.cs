@@ -23,7 +23,7 @@ public class DrinkRepositoryUnitTest
         var drink = new Drink
         {
             Name = "Test Drink",
-            Receipe = "test receipe",
+            Recipe = "test Recipe",
             Ingredients = new List<Ingredient>
             {
                 new Ingredient { Name = "Rum" },
@@ -52,7 +52,7 @@ public class DrinkRepositoryUnitTest
         var drink = new Drink
         {
             Name = "Test Drink",
-            Receipe = "test receipe",
+            Recipe = "test Recipe",
             Ingredients = new List<Ingredient>
             {
                 new Ingredient { Name = "Rum" },

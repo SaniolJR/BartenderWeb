@@ -9,6 +9,8 @@ export default function SearchDrinkPage() {
   const [missingCount, setMissingCount] = useState<number>(0)
   const [verified, setVerified] = useState<boolean>(false)
   const [textFilter, setTextFilter] = useState<string>("")
+  //usestate for selected ingredients
+   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
 
   //temporary send http simulator
   const getDrinks = () => {
@@ -43,7 +45,11 @@ export default function SearchDrinkPage() {
         <Grid size={{ xs: 12, md: 3}} >
           <Paper sx={{ p: 2, height: '70vh'}}>
 
-            <IngredientsBox/>
+            <IngredientsBox
+              onSelectedChange={setSelectedIngredients}
+              width="100%"
+              height="100%"
+            />
 
           </Paper>
         </Grid>

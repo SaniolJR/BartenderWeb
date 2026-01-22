@@ -8,8 +8,8 @@ namespace CA_Application.DTOs
         [Required(ErrorMessage = "Insert a Drink Name!")]
         public string Name { get; set; } = default!;
 
-        [Required(ErrorMessage = "Insert a Drink Receipe!")]
-        public string Receipe { get; set; } = default!;
+        [Required(ErrorMessage = "Insert a Drink !")]
+        public string Recipe { get; set; } = default!;
         public string? ImageUrl { get; set; }
 
         [Required(ErrorMessage = "Cant drink air!")]

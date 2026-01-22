@@ -1,28 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
-import { 
-  Box, TextField, IconButton, List, ListItem, ListItemButton, ListItemText, Button, CircularProgress, Alert 
+import { useState, useEffect, useCallback, useRef } from 'react';
+import {
+  Box, TextField, IconButton, List, ListItem, ListItemText, Button, CircularProgress, Alert
 } from '@mui/material';
+import ListItemButton from '@mui/material/ListItemButton';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
-// IngredientsBox component
-// props:
-//   onSelectedChange: (ids: string[]) => void  // callback for external useState with selected ingredients
-//   width: string | number                      // width of main box
-//   height: string | number                     // height of main box
-type IngredientsBoxProps = {
-  onSelectedChange?: (ids: string[]) => void;
+
+interface IngredientsBoxProps {
+  onSelectedChange: (selected: string[]) => void;
   width?: string | number;
   height?: string | number;
-};
+}
 
 export default function IngredientsBox({ onSelectedChange, width = '100%', height = 'auto' }: IngredientsBoxProps) {
   //usestate for text filter
   const [filter, setFilter] = useState('');
   //usestate for ingredients from server
   const [ingredients, setIngredients] = useState<Array<{id: string; name: string; drinks?: any}>>([]);
-  //usestate for chosen ingredients
-  const [selected, setSelected] = useState<string[]>([]); 
+  //usestate for chosen ingredients (ids)
+  const [selected, setSelected] = useState<string[]>([]);
+  //usestate for full info about selected ingredients (cache)
+  const [selectedCache, setSelectedCache] = useState<Array<{id: string; name: string; drinks?: any}>>([]);
   //usestate for current page (pagination)
   const [page, setPage] = useState(0);
   //usestate: is there more pages to load?
@@ -31,6 +30,8 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
   const [loading, setLoading] = useState(false);
   //usestate for error message during download
   const [error, setError] = useState<string | null>(null);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
   
   // pageSize and endpoint URL
   const PAGE_SIZE = 20;
@@ -43,35 +44,29 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
     setError(null);
 
     try {
-      //get parameters for HTTP
       const targetPage = isReset ? 0 : (typeof nextPage === 'number' ? nextPage : page);
-      //add them to query
       const queryParams = new URLSearchParams({
-        TextFilter: filter || '', 
+        TextFilter: filter || '',
         PageSize: PAGE_SIZE.toString(),
         Page: targetPage.toString(),
       });
-      //HTTP GET
       const res = await fetch(`${apiUrl}/ingredient?${queryParams}`);
 
       if (!res.ok) throw new Error(`Server Error: ${res.status}`);
-      
-      //recognize server response - add it to array
       const data = await res.json();
+      console.log('Fetched ingredients:', data);
       let newItems: Array<{id: string; name: string; drinks?: any}> = [];
       newItems = data;
 
-      //if add new ingredients or reset them
       setIngredients(prev => {
-        // if reset, set new list; if not, append only new ingredients (no duplicates by id)
-        const combined = isReset ? newItems : [...prev, ...newItems.filter(ni => !prev.some(pi => pi.id === ni.id))];
+        if (isReset) return newItems;
+        const existingIds = new Set(prev.map(i => i.id));
+        const combined = [...prev, ...newItems.filter(ni => !existingIds.has(ni.id))];
         return combined;
       });
 
-      // is there more pages to load?
       setHasMore(newItems.length >= PAGE_SIZE);
 
-      // set page number
       if (isReset) setPage(1);
       else if (typeof nextPage === 'number') setPage(nextPage);
       else setPage(prev => prev + 1);
@@ -85,6 +80,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
 
   // --- SEARCH/FILTER HANDLING ---
   // after clicking search: clear list, set page to 0, hasMore to true and fetch from start (reset)
+  // DO NOT reset selected ingredients!
   const handleSearch = () => {
     setIngredients([]); 
     setPage(0);
@@ -103,29 +99,76 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  // call callback with selected ingredients on every selected change
+  // call callback with selected ingredient names on every selected change
   useEffect(() => {
-    if (onSelectedChange) onSelectedChange(selected);
-  }, [selected, onSelectedChange]);
+    const selectedNames = selected.map(id => {
+      const item = ingredients.find(i => i.id === id) || selectedCache.find(i => i.id === id);
+      return item ? item.name : null;
+    }).filter((name): name is string => name !== null);
+    onSelectedChange(selectedNames);
+  }, [selected, ingredients, selectedCache, onSelectedChange]);
+
+  // --- INFINITE SCROLL LOGIC ---
+  useEffect(() => {
+    if (!hasMore || loading) return;
+    const loader = loaderRef.current;
+    if (!loader) return;
+    const observer = new window.IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchIngredients(false, page + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+    observer.observe(loader);
+    return () => observer.disconnect();
+  }, [hasMore, loading, fetchIngredients, page]);
 
   // --- SELECTION LOGIC (select/deselect ingredients) ---
-  // add ingredient to selected
+  // add ingredient to selected and cache its info
   const handleSelect = (id: string) => {
-    if (!selected.includes(id)) setSelected([...selected, id]);
+    if (!selected.includes(id)) {
+      setSelected(prev => [...prev, id]);
+      const ing = ingredients.find(i => i.id === id);
+      if (ing && !selectedCache.some(c => c.id === id)) {
+        setSelectedCache(prev => [...prev, ing]);
+      }
+    }
   };
-  // remove ingredient from selected
+  // remove ingredient from selected and cache
   const handleDeselect = (id: string) => {
     setSelected(selected.filter(i => i !== id));
+    setSelectedCache(selectedCache.filter(i => i.id !== id));
   };
-  // clear all selected and filter
+  // clear all selected and filter and cache
   const handleClearAll = () => {
     setSelected([]);
+    setSelectedCache([]);
     setFilter('');
   };
 
-  // split into selected and unselected ingredients
-  const selectedIngredients = ingredients.filter(i => selected.includes(i.id));
-  const unselectedIngredients = ingredients.filter(i => !selected.includes(i.id));
+  // selectedIngredients: always show all selected, using cache if not present in ingredients
+  const selectedIngredients = selected.map(id => {
+    return ingredients.find(i => i.id === id) || selectedCache.find(i => i.id === id);
+  }).filter(Boolean) as {id: string; name: string; drinks?: any}[];
+  // unselectedIngredients: filter by search only for unselected
+  const unselectedIngredients = ingredients
+    .filter(i => !selected.includes(i.id))
+    .filter(i => !filter || i.name.toLowerCase().includes(filter.toLowerCase()));
+  // When ingredients change, update cache for selected if new info is available
+  useEffect(() => {
+    setSelectedCache(prevCache => {
+      const newCache = [...prevCache];
+      selected.forEach(id => {
+        const ing = ingredients.find(i => i.id === id);
+        if (ing && !newCache.some(c => c.id === id)) {
+          newCache.push(ing);
+        }
+      });
+      return newCache;
+    });
+  }, [ingredients, selected]);
 
   // render UI
   return (
@@ -135,6 +178,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
       borderRadius: 2,
       p: 2,
       minHeight: height,
+      height: height,
       width: width,
       display: 'flex',
       flexDirection: 'column'
@@ -160,7 +204,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-      {/* WYBRANE SKŁADNIKI */}
+      {/* Chosen ingredient */}
       {selectedIngredients.length > 0 && (
         <Box sx={{ mb: 2, p: 1, bgcolor: 'rgba(255, 253, 231, 0.5)', borderRadius: 1 }}>
           <List dense>
@@ -177,8 +221,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
         </Box>
       )}
 
-      {/* DOSTĘPNE SKŁADNIKI (TUTAJ BYŁ BŁĄD) */}
-      <Box sx={{ flex: 1, overflowY: 'auto', maxHeight: '300px' }}>
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         <List dense>
           {unselectedIngredients.map((ing, index) => (
             <ListItem key={ing.id} disablePadding>
@@ -188,20 +231,14 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
             </ListItem>
           ))}
           {!loading && unselectedIngredients.length === 0 && ingredients.length === 0 && (
-            <Box sx={{ p: 2, textAlign: 'center', opacity: 0.6 }}>Brak składników</Box>
+            <Box sx={{ p: 2, textAlign: 'center', opacity: 0.6 }}>There are no ingredients more</Box>
           )}
         </List>
-        {hasMore && (
+        {/* Infinite scroll loader element */}
+        <div ref={loaderRef} style={{ height: 32, display: hasMore ? 'block' : 'none' }} />
+        {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 2, minHeight: '50px' }}>
-            <Button
-              onClick={() => fetchIngredients(false, page + 1)}
-              disabled={loading}
-              variant="contained"
-              color="primary"
-            >
-              {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
-              Załaduj więcej
-            </Button>
+            <CircularProgress size={20} />
           </Box>
         )}
       </Box>

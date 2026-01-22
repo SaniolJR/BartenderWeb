@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA_Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20260120184544_IngredientsUpdate")]
-    partial class IngredientsUpdate
+    [Migration("20260122041529_RenameReceipeToRecipe")]
+    partial class RenameReceipeToRecipe
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

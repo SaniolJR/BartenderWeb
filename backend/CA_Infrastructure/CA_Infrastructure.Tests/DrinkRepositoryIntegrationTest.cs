@@ -24,7 +24,7 @@ namespace CA_Infrastructure.Tests
             var drink = new Drink
             {
                 Name = "Test Drink",
-                Receipe = "Vodka and Soda blyat",
+                Recipe = "Vodka and Soda blyat",
                 Ingredients = new List<Ingredient>{
                             new Ingredient {Name = "Vodka"},
                             new Ingredient {Name = "Soda"}}
@@ -53,7 +53,7 @@ namespace CA_Infrastructure.Tests
             {
                 Id = 123,
                 Name = "test Drink",
-                Receipe = "drink it to test it",
+                Recipe = "drink it to test it",
                 Ingredients = new List<Ingredient>{
                                     new Ingredient {Name = "Vodka"},
                                     new Ingredient {Name = "Polish Vodka"}}
@@ -147,8 +147,8 @@ namespace CA_Infrastructure.Tests
             using var context = new MainDbContext(options);
             var repo = new DrinkRepository(context);
 
-            var drink1 = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true };
-            var drink2 = new Drink { Name = "Cola Drink", Receipe = "Cola", Verified = false };
+            var drink1 = new Drink { Name = "Mojito", Recipe = "Rum, Mint", Verified = true };
+            var drink2 = new Drink { Name = "Cola Drink", Recipe = "Cola", Verified = false };
             context.Drinks.AddRange(drink1, drink2);
             await context.SaveChangesAsync();
 
@@ -168,7 +168,7 @@ namespace CA_Infrastructure.Tests
             var repo = new DrinkRepository(context);
 
             var ingredient = new Ingredient { Name = "Rum" };
-            var drink = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient } };
+            var drink = new Drink { Name = "Mojito", Recipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient } };
             ingredient.Drinks.Add(drink);
             context.Ingredients.Add(ingredient);
             context.Drinks.Add(drink);
@@ -190,7 +190,7 @@ namespace CA_Infrastructure.Tests
 
             var ingredient1 = new Ingredient { Name = "Rum" };
             var ingredient2 = new Ingredient { Name = "Mint" };
-            var drink = new Drink { Name = "Mojito", Receipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient1, ingredient2 } };
+            var drink = new Drink { Name = "Mojito", Recipe = "Rum, Mint", Verified = true, Ingredients = new List<Ingredient> { ingredient1, ingredient2 } };
             ingredient1.Drinks.Add(drink);
             ingredient2.Drinks.Add(drink);
             context.Ingredients.AddRange(ingredient1, ingredient2);

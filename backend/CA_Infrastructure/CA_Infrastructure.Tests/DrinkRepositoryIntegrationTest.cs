@@ -201,5 +201,39 @@ namespace CA_Infrastructure.Tests
             Assert.Single(result);
             Assert.Equal("Mojito", result[0].Name);
         }
+
+        [Fact]
+        public async Task GetDrinkByIdAsync_LoadsIngredients()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<MainDbContext>()
+                .UseInMemoryDatabase(databaseName: "DrinkDbTest_LoadsIngredients")
+                .Options;
+
+            using var dbContext = new MainDbContext(options);
+
+            var ingredient1 = new Ingredient { Name = "Rum" };
+            var ingredient2 = new Ingredient { Name = "Mint" };
+            var drink = new Drink
+            {
+                Name = "Mojito",
+                Recipe = "Mix everything",
+                Ingredients = new List<Ingredient> { ingredient1, ingredient2 }
+            };
+            dbContext.Drinks.Add(drink);
+            await dbContext.SaveChangesAsync();
+
+            var repository = new DrinkRepository(dbContext);
+
+            // Act
+            var result = await repository.GetDrinkByIdAsync(drink.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Ingredients);
+            Assert.Equal(2, result.Ingredients.Count);
+            Assert.Contains(result.Ingredients, i => i.Name == "Rum");
+            Assert.Contains(result.Ingredients, i => i.Name == "Mint");
+        }
     }
 }

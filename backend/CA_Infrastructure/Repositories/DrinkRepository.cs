@@ -16,7 +16,9 @@ namespace CA_Infrastructure.Repositories
 
         public async Task<Drink> GetDrinkByIdAsync(int id)
         {
-            return await _dbContext.Drinks.FindAsync(id);
+            return await _dbContext.Drinks
+            .Include(d => d.Ingredients)
+            .FirstOrDefaultAsync(d => d.Id == id);
         }
         public async Task<Drink> AddDrinkAsync(Drink drink)
         {

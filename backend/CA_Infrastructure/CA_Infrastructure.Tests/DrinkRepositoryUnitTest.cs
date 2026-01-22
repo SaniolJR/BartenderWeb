@@ -40,30 +40,4 @@ public class DrinkRepositoryUnitTest
         Assert.Equal("Test Drink", result.Name);
     }
 
-    [Fact]
-    public async Task GetDrinkByIdAsync_ExistingIDTestRun_True()
-    {
-        //Arrange
-        var mockSet = new Mock<DbSet<Drink>>();
-        var mockContext = new Mock<MainDbContext>(new DbContextOptions<MainDbContext>());
-        mockContext.Setup(m => m.Drinks).Returns(mockSet.Object);
-
-        var repository = new DrinkRepository(mockContext.Object);
-        var drink = new Drink
-        {
-            Name = "Test Drink",
-            Recipe = "test Recipe",
-            Ingredients = new List<Ingredient>
-            {
-                new Ingredient { Name = "Rum" },
-                new Ingredient { Name = "Cola" }
-            }
-        };
-
-        // Act
-        var result = await repository.GetDrinkByIdAsync(123);
-
-        // Assert
-        mockSet.Verify(m => m.FindAsync(It.IsAny<object[]>()), Times.Once);
-    }
 }

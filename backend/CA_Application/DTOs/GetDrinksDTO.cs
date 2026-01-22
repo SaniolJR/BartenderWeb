@@ -10,4 +10,21 @@ namespace CA_Application.DTOs
         public int PageSize { get; set; } = 20;
         public int Page { get; set; } = 0;
     }
+
+    public class DrinkDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Recipe { get; set; }
+        public List<IngredientDTO> Ingredients { get; set; }
+        public double AverageRating { get; set; }
+        public bool Verified { get; set; }
+        public string? ImageURL { get; set; }
+    }
+
+    public class IngredientDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

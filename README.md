@@ -88,3 +88,7 @@ Decyzja projektowa: Testy zostały umieszczone w tej warstwie, ponieważ zawiera
    cd frontend
    npm install
    npm run dev
+
+Autor:
+Mateusz Sadowski
+mateusz.sadowski04@wp.pl

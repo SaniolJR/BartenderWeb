@@ -1,29 +1,31 @@
-import { useState, useEffect } from 'react'
-import { Container, Grid, Paper, Button, Box } from '@mui/material'
-import MissingIngredientCount from './ingredientsMissing'
-import VerifiedOnly from './verifiedOnly'
-import SearchByText from './searchByText.tsx'
-import IngredientsBox from './Ingredients/IngredientsBox'
 
+import { useState, useEffect } from 'react';
+import { Container, Grid, Paper, Button, Box } from '@mui/material';
+import MissingIngredientCount from './ingredientsMissing';
+import VerifiedOnly from './verifiedOnly';
+import SearchByText from './searchByText.tsx';
+import IngredientsBox from './Ingredients/IngredientsBox';
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
-  export default function SearchDrinkPage() {
-    const [missingCount, setMissingCount] = useState<number>(0)
-    const [verified, setVerified] = useState<boolean>(false)
-    const [textFilter, setTextFilter] = useState<string>("")
-    //usestate for selected ingredients
-    const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
-    //cache drinks that server returned
-    const [drinksCache, setDrinksCache] = useState<any[]>([]);
+export default function SearchDrinkPage() {
+  const [missingCount, setMissingCount] = useState<number>(0);
+  const [verified, setVerified] = useState<boolean>(false);
+  const [textFilter, setTextFilter] = useState<string>("");
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [drinksCache, setDrinksCache] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-    const getDrinks = async () => {
+  // Fetch drinks from backend, supports pagination
+  const getDrinks = async (reset = false) => {
+    const currentPage = reset ? 1 : page;
     const url = new URL(`${apiUrl}/drinks`);
     url.searchParams.append("Verified", String(verified));
     url.searchParams.append("TextFilter", textFilter);
     url.searchParams.append("MissingIngredients", String(missingCount));
-    url.searchParams.append("PageSize", "20");
-    url.searchParams.append("Page", "1");
+    url.searchParams.append("PageSize", "10");
+    url.searchParams.append("Page", String(currentPage));
     selectedIngredients.forEach(ing => url.searchParams.append("Ingredients", ing));
 
     try {
@@ -31,88 +33,96 @@ import IngredientsBox from './Ingredients/IngredientsBox'
       if (!res.ok) throw new Error("Server error: " + res.status);
       const data = await res.json();
       console.log("Drinks response:", data);
-      setDrinksCache(data);
+      if (reset) {
+        setDrinksCache(data);
+        setPage(2);
+      } else {
+        setDrinksCache(prev => [...prev, ...data]);
+        setPage(prev => prev + 1);
+      }
+      setHasMore(data.length === 10); // If less than page size, no more data
     } catch (err) {
-      alert("Błąd pobierania drinków: " + (err as Error).message);
+      alert("Error fetching drinks: " + (err as Error).message);
     }
   };
 
+  // Reset drinks list when filters change
+  const handleApplyFilters = () => {
+    setPage(1);
+    setHasMore(true);
+    getDrinks(true);
+  };
+
   useEffect(() => {
-      getDrinks();
-    }, []);
+    getDrinks(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
- return (
+  return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      
-      {/* MAIN CONTAINER */}
+      {/* Main container grid */}
       <Grid container spacing={3}>
-
-        {/* --- FILTERS - top bar */}
-        <Grid size={{xs: 12}}>
-          <Paper sx={{ p: 2, display: 'flex', gap: 2, justifyContent: 'space-around'}}>
-
-            {/*type missing indegridients*/}
+        {/* Filters bar */}
+        <Grid size={{ xs: 12 }}>
+          <Paper sx={{ p: 2, display: 'flex', gap: 2, justifyContent: 'space-around' }}>
             <MissingIngredientCount number={missingCount} setNumber={setMissingCount} />
-            {/*check if want verified only*/}
-            <VerifiedOnly verified={verified} setVerified={setVerified}/>
-            {/*filter by text*/}
-            <SearchByText 
-                textFilter={textFilter} 
-                setTextFilter={setTextFilter} 
-                onSearch={getDrinks}
+            <VerifiedOnly verified={verified} setVerified={setVerified} />
+            <SearchByText
+              textFilter={textFilter}
+              setTextFilter={setTextFilter}
+              onSearch={handleApplyFilters}
             />
-            <Button onClick={getDrinks}>Apply filters</Button>
+            <Button onClick={handleApplyFilters}>Apply filters</Button>
           </Paper>
         </Grid>
-
-        {/* LEFT PANEL - INGREDIENTS*/}
-        {/* get 3/12 width on PC and MAX on Phone */}
-        <Grid size={{ xs: 12, md: 3}} >
-          <Paper sx={{ p: 2, height: '70vh'}}>
-
+        {/* Ingredients panel */}
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper sx={{ p: 2, height: '70vh' }}>
             <IngredientsBox
               onSelectedChange={setSelectedIngredients}
               width="100%"
               height="100%"
             />
-
           </Paper>
         </Grid>
-
-        {/* MAIN PANEL: RETURNED DRINKS*/}
-        <Grid size={{xs: 12, md: 9 }} >
-          <Paper sx={{ p: 2,height: '70vh', bgcolor: '#3e010148' }}>
-          
-        {drinksCache.length > 0 ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {drinksCache.map((drink, idx) => (
-            <Button
-              key={drink.id || idx}
-              href={`/drink/${drink.id}`}
-              variant="outlined"
-              sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
-            >
-              <Box sx={{ display: 'flex', width: '100%', height:'5vh', alignItems: 'center', justifyContent: 'space-between' }}>
-                {/* Składniki po lewej */}
-                <span style={{ fontSize: '0.9em', color: '#888', flex: 1 }}>
-                  Składniki: {Array.isArray(drink.ingredients) ? drink.ingredients.map((ing: any) => ing.name).join(', ') : ''}
-                </span>
-                {/* Nazwa, weryfikacja i ocena po prawej */}
-                <span style={{ fontWeight: 'bold', marginLeft: 16 }}>
-                  {drink.name} {drink.verified ? "✅" : "❌"} | {drink.averageRating ?? "No ratings yet"}
-                </span>
+        {/* Drinks list panel with scroll and pagination */}
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Paper sx={{ p: 2, height: '70vh', bgcolor: '#3e010148', overflowY: 'auto' }}>
+            {drinksCache.length > 0 ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {/* Render drinks */}
+                {drinksCache.map((drink, idx) => (
+                  <Button
+                    key={drink.id || idx}
+                    href={`/drink/${drink.id}`}
+                    variant="outlined"
+                    sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
+                  >
+                    <Box sx={{ display: 'flex', width: '100%', height: '5vh', alignItems: 'center', justifyContent: 'space-between' }}>
+                      {/* Ingredients on the left */}
+                      <span style={{ fontSize: '0.9em', color: '#888', flex: 1 }}>
+                        Ingredients: {Array.isArray(drink.ingredients) ? drink.ingredients.map((ing: any) => ing.name).join(', ') : ''}
+                      </span>
+                      {/* Name, verified, rating on the right */}
+                      <span style={{ fontWeight: 'bold', marginLeft: 16 }}>
+                        {drink.name} {drink.verified ? "✅" : "❌"} | {drink.averageRating ?? "No ratings yet"}
+                      </span>
+                    </Box>
+                  </Button>
+                ))}
+                {/* Load more button for pagination */}
+                {hasMore && (
+                  <Button onClick={() => getDrinks(false)} variant="contained" sx={{ mt: 2 }}>
+                    Load more
+                  </Button>
+                )}
               </Box>
-            </Button>
-          ))}
-        </Box>
-      ) : (
-        <Box sx={{ color: '#888', textAlign: 'center', mt: 2 }}>Brak wyników</Box>
-      )}
-
+            ) : (
+              <Box sx={{ color: '#888', textAlign: 'center', mt: 2 }}>No results</Box>
+            )}
           </Paper>
         </Grid>
-
       </Grid>
     </Container>
-  )
+  );
 }

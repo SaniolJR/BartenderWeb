@@ -12,11 +12,19 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
     public async Task<IActionResult> GetDrinkById(int id)
     {
         var drink = await drinkService.GetDrinkByIdAsync(id);
-
         if (drink is null)
             return NotFound();
-
-        return Ok(drink);
+        var dto = new DrinkDTO
+        {
+            Id = drink.Id,
+            Name = drink.Name,
+            Recipe = drink.Recipe,
+            Ingredients = drink.Ingredients.Select(i => new IngredientDTO { Id = i.Id, Name = i.Name }).ToList(),
+            AverageRating = drink.AverageRating,
+            Verified = drink.Verified,
+            ImageURL = drink.ImageURL
+        };
+        return Ok(dto);
     }
 
     [HttpPost]
@@ -39,9 +47,20 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDrinks([FromQuery] GetDrinksDTO dto)
+    public async Task<IActionResult> GetDrinks([FromQuery] GetDrinksDTO query)
     {
-        var result = await drinkService.GetDrinksAsync(dto);
-        return Ok(result);
+        var drinks = await drinkService.GetDrinksAsync(query);
+        // drinks to List<Drink> z EF
+        var dtoList = drinks.Select(d => new DrinkDTO
+        {
+            Id = d.Id,
+            Name = d.Name,
+            Recipe = d.Recipe,
+            Ingredients = d.Ingredients.Select(i => new IngredientDTO { Id = i.Id, Name = i.Name }).ToList(),
+            AverageRating = d.AverageRating,
+            Verified = d.Verified,
+            ImageURL = d.ImageURL
+        }).ToList();
+        return Ok(dtoList);
     }
 }

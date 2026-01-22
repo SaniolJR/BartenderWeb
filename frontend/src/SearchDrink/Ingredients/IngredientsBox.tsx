@@ -45,19 +45,27 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
 
     try {
       const targetPage = isReset ? 0 : (typeof nextPage === 'number' ? nextPage : page);
+      //create object representint parameters to API query
       const queryParams = new URLSearchParams({
         TextFilter: filter || '',
         PageSize: PAGE_SIZE.toString(),
         Page: targetPage.toString(),
       });
+
+      //HTTP GET
       const res = await fetch(`${apiUrl}/ingredient?${queryParams}`);
 
+      //Server ERROR HANDLING
       if (!res.ok) throw new Error(`Server Error: ${res.status}`);
+      //get data from response
       const data = await res.json();
       console.log('Fetched ingredients:', data);
+
+      //prepare new ingredients
       let newItems: Array<{id: string; name: string; drinks?: any}> = [];
       newItems = data;
 
+      //ingriedients state actualization
       setIngredients(prev => {
         if (isReset) return newItems;
         const existingIds = new Set(prev.map(i => i.id));
@@ -65,14 +73,16 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
         return combined;
       });
 
+      //does website have more ingredients to load?
       setHasMore(newItems.length >= PAGE_SIZE);
 
+      //pagination
       if (isReset) setPage(1);
       else if (typeof nextPage === 'number') setPage(nextPage);
       else setPage(prev => prev + 1);
 
     } catch (err: any) {
-      setError(err.message || 'Connection error');
+      setError(err.message || 'Cnnection error');
     } finally {
       setLoading(false);
     }
@@ -80,7 +90,8 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
 
   // --- SEARCH/FILTER HANDLING ---
   // after clicking search: clear list, set page to 0, hasMore to true and fetch from start (reset)
-  // DO NOT reset selected ingredients!
+  
+  //handle searching ingredients after clicking search button
   const handleSearch = () => {
     setIngredients([]); 
     setPage(0);
@@ -100,6 +111,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
   }, []); 
 
   // call callback with selected ingredient names on every selected change
+  //so it is exporting ingredients name lists
   useEffect(() => {
     const selectedNames = selected.map(id => {
       const item = ingredients.find(i => i.id === id) || selectedCache.find(i => i.id === id);
@@ -108,7 +120,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
     onSelectedChange(selectedNames);
   }, [selected, ingredients, selectedCache, onSelectedChange]);
 
-  // --- INFINITE SCROLL LOGIC ---
+  // --- SCROLL LOGIC ---
   useEffect(() => {
     if (!hasMore || loading) return;
     const loader = loaderRef.current;

@@ -38,6 +38,8 @@ namespace CA_Infrastructure.Repositories
                     .Include(d => d.Ingredients) //get ingredients
                     .Where(d => (!verified || d.Verified) &&
                                 (string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())))
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
                     .ToListAsync();
             }
 

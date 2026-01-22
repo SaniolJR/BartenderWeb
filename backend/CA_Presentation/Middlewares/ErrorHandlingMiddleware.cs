@@ -11,8 +11,11 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception occurred while processing request.");
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsync("Sorry, something went wrong :/");
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync("Sorry, something went wrong :/");
+            }
         }
     }
 }

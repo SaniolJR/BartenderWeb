@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Grid, Paper, Button, Box } from '@mui/material'
 import MissingIngredientCount from './ingredientsMissing'
 import VerifiedOnly from './verifiedOnly'
@@ -14,6 +14,8 @@ import IngredientsBox from './Ingredients/IngredientsBox'
     const [textFilter, setTextFilter] = useState<string>("")
     //usestate for selected ingredients
     const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
+    //cache drinks that server returned
+    const [drinksCache, setDrinksCache] = useState<any[]>([]);
 
     const getDrinks = async () => {
     const url = new URL(`${apiUrl}/drinks`);
@@ -29,11 +31,15 @@ import IngredientsBox from './Ingredients/IngredientsBox'
       if (!res.ok) throw new Error("Server error: " + res.status);
       const data = await res.json();
       console.log("Drinks response:", data);
-      // tutaj możesz ustawić stan z drinkami, jeśli chcesz je wyświetlić
+      setDrinksCache(data);
     } catch (err) {
       alert("Błąd pobierania drinków: " + (err as Error).message);
     }
   };
+
+  useEffect(() => {
+      getDrinks();
+    }, []);
 
  return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -77,7 +83,31 @@ import IngredientsBox from './Ingredients/IngredientsBox'
         <Grid size={{xs: 12, md: 9 }} >
           <Paper sx={{ p: 2,height: '70vh', bgcolor: '#3e010148' }}>
           
-    {selectedIngredients}
+        {drinksCache.length > 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {drinksCache.map((drink, idx) => (
+            <Button
+              key={drink.id || idx}
+              href="url"
+              variant="outlined"
+              sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
+            >
+              <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+                {/* Składniki po lewej */}
+                <span style={{ fontSize: '0.9em', color: '#888', flex: 1 }}>
+                  Składniki: {Array.isArray(drink.ingredients) ? drink.ingredients.map((ing: any) => ing.name).join(', ') : ''}
+                </span>
+                {/* Nazwa, weryfikacja i ocena po prawej */}
+                <span style={{ fontWeight: 'bold', marginLeft: 16 }}>
+                  {drink.name} {drink.verified ? "✅" : "❌"} | {drink.averageRating ?? "Brak oceny"}
+                </span>
+              </Box>
+            </Button>
+          ))}
+        </Box>
+      ) : (
+        <Box sx={{ color: '#888', textAlign: 'center', mt: 2 }}>Brak wyników</Box>
+      )}
 
           </Paper>
         </Grid>
@@ -90,26 +120,5 @@ import IngredientsBox from './Ingredients/IngredientsBox'
 
 /*
  Przeglądanie drinków
-	-na podstawie nazwy i wybranych składników
-	-możliwość wyboru opcji bez unvedified 	skladnikow - pokazuje tylko driny ze 	składnikami od admina
 	-sortowanie oceną
-	-możliwość wybrania verified drinkow
  */
-
-  /*
-  TODO:
-    -okno wpisywania
-    -przycisk VERIFIED ONLY obok
-    -Menu ze składnikami:
-      -okno wyszukiwania składniku po nazwie
-      sortowanie
-    */
-
-
-      /*
-      HTTP:
-      ile drinkow moze brakowac
-      jaka nazwa parametry
-      jakei skladniki
-      czy zweryfikowane
-      */

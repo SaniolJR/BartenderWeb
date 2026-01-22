@@ -5,6 +5,13 @@ import { Link as RouterLink } from 'react-router-dom'
 
 const navItems = [
   { label: 'Search', to: '/search' },
+  { label: 'Add drink', to: '/addDrink' },
+  { label: 'Add Ingredient', to: '/addIngredient' }
+  
+] as const
+
+const navItemsFull = [
+  { label: 'Search', to: '/search' },
   { label: 'Add drink', to: '/add' },
   { label: 'Favourites Drinks', to: '/favourites' },
   { label: 'Account', to: '/account' },

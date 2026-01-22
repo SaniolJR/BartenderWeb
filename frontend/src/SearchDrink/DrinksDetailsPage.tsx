@@ -15,10 +15,9 @@ export default function DrinkDetailsPage() {
       .then(setDrink);
   }, [id]);
 
-  if (!drink) return <Box>Ładowanie...</Box>;
+  if (!drink) return <Box>Loading... (goes by faster when you're drunk😉)</Box>;
 
-  // Ustal rozmiar czcionki zależny od szerokości lub wysokości okna
-  const fontSize = '3vh'; // lub np. '8vh' jeśli chcesz zależność od wysokości
+  const fontSize = '3vh';
 
   return (
     <Paper sx={{ p: 3, width: '60vw', margin: 'auto', mt: '15vh',  }}>
@@ -30,25 +29,25 @@ export default function DrinkDetailsPage() {
             padding: '1em 2em',
             minWidth: 'unset',
             minHeight: 'unset',
-            borderWidth: 4, // grubość ramki
-            borderColor: '#660404', // kolor ramki (opcjonalnie)
-            borderStyle: 'solid', // styl ramki (opcjonalnie)
+            borderWidth: 4,
+            borderColor: '#660404',
+            borderStyle: 'solid',
         }}
       >
-        Wróć
+        Back
       </Button>
       <Typography variant="h4" gutterBottom sx={{ fontSize, textAlign: 'center' }}>
-        <strong>Nazwa:</strong> {drink.name} {drink.verified ? "✅" : "❌"}
+        <strong>Name:</strong> {drink.name} {drink.verified ? "✅" : "❌"}
       </Typography>
       <Stack spacing={2} sx={{ width: '100%', alignItems: 'center' }}>
         <Typography sx={{ fontSize, textAlign: 'center' }}>
-          <strong>Przepis:</strong> {drink.recipe}
+          <strong>Recipe:</strong> {drink.recipe}
         </Typography>
         <Typography sx={{ fontSize, textAlign: 'center' }}>
-          <strong>Składniki:</strong> {drink.ingredients.map((ing: any) => ing.name).join(', ')}
+          <strong>Ingredients:</strong> {drink.ingredients.map((ing: any) => ing.name).join(', ')}
         </Typography>
         <Typography sx={{ fontSize, textAlign: 'center' }}>
-          <strong>Średnia ocena:</strong> {drink.averageRating}
+          <strong>Average rating:</strong> {drink.averageRating}
         </Typography>
       </Stack>
     </Paper>

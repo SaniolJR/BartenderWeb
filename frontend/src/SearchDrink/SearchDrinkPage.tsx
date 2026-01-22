@@ -92,14 +92,14 @@ import IngredientsBox from './Ingredients/IngredientsBox'
               variant="outlined"
               sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
             >
-              <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', width: '100%', height:'5vh', alignItems: 'center', justifyContent: 'space-between' }}>
                 {/* Składniki po lewej */}
                 <span style={{ fontSize: '0.9em', color: '#888', flex: 1 }}>
                   Składniki: {Array.isArray(drink.ingredients) ? drink.ingredients.map((ing: any) => ing.name).join(', ') : ''}
                 </span>
                 {/* Nazwa, weryfikacja i ocena po prawej */}
                 <span style={{ fontWeight: 'bold', marginLeft: 16 }}>
-                  {drink.name} {drink.verified ? "✅" : "❌"} | {drink.averageRating ?? "Brak oceny"}
+                  {drink.name} {drink.verified ? "✅" : "❌"} | {drink.averageRating ?? "No ratings yet"}
                 </span>
               </Box>
             </Button>
@@ -116,9 +116,3 @@ import IngredientsBox from './Ingredients/IngredientsBox'
     </Container>
   )
 }
-
-
-/*
- Przeglądanie drinków
-	-sortowanie oceną
- */

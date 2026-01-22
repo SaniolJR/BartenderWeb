@@ -72,7 +72,7 @@ export default function IngredientsBox({ onSelectedChange, width = '100%', heigh
       else setPage(prev => prev + 1);
 
     } catch (err: any) {
-      setError(err.message || 'Błąd połączenia');
+      setError(err.message || 'Connection error');
     } finally {
       setLoading(false);
     }

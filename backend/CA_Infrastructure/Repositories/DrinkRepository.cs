@@ -50,7 +50,7 @@ namespace CA_Infrastructure.Repositories
                 .Include(d => d.Ingredients) // get drink ingredients to count how many missing
                 .Where(d => (!verified || d.Verified)) // verified filter
                 .Where(d => string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())) // name filrer
-                .Where(d => d.Ingredients.Any(i => inputIngredients.Contains(i.Name))) // only drinks that have our ingredient
+                .Where(d => d.Ingredients.Any(i => inputIngredients.Any(inp => inp.Equals(i.Name, StringComparison.OrdinalIgnoreCase)))) // only drinks that have our ingredient
                 .ToListAsync();
 
             // filter drinks and reduce to missing count friendly

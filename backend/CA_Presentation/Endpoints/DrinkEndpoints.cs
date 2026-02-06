@@ -50,7 +50,7 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
     public async Task<IActionResult> GetDrinks([FromQuery] GetDrinksDTO query)
     {
         var drinks = await drinkService.GetDrinksAsync(query);
-        // drinks to List<Drink> z EF
+        // mapping back to DTO for avoid jamming lists
         var dtoList = drinks.Select(d => new DrinkDTO
         {
             Id = d.Id,

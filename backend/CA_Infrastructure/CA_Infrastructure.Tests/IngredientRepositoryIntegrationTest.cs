@@ -79,7 +79,7 @@ public class IngredientRepositoryIntegrationTests
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
     }
-
+    [Fact]
     public async Task GetIngredientsAsync_ReturnsFilteredIngredients()
     {
         // Arrange
@@ -107,7 +107,7 @@ public class IngredientRepositoryIntegrationTests
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
     }
-
+    [Fact]
     public async Task GetIngredientsAsync_ReturnsNull()
     {
         // Arrange
@@ -132,7 +132,7 @@ public class IngredientRepositoryIntegrationTests
         var result = await repo.GetIngredientsAsync("Vodka", 0, 20);
 
         // Assert
-        Assert.Null(result);
+        Assert.Empty(result);
     }
 
 }

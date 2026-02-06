@@ -50,6 +50,16 @@ var app = builder.Build();
 app.UseSerilogRequestLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+//Configure initialization od bd for docker
+using (var scope = app.Services.CreateScope())
+{
+    // get DbContext
+    var dbContext = scope.ServiceProvider.GetRequiredService<CA_Infrastructure.Database.MainDbContext>();
+    // Use migration taht creates tables if they dont exist
+    dbContext.Database.Migrate();
+}
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

@@ -1,0 +1,31 @@
+services:
+  # --- build db (SQL SERVER) ---
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_container
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=kXP4$'0}9E+)  #password!
+    ports:
+      - "1433:1433" #db port
+    volumes:
+      - sql_data_v2:/var/opt/mssql/data # prevention od cleaning data after restart
+
+  # --- build backend (.NET) ---
+  backend:
+    build:
+      context: .
+      dockerfile: CA_Presentation/Dockerfile
+    container_name: backend_container
+    ports:
+      - "5118:8080"  # port from .env at FE
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development  #dev mode
+      # let docker find ip od db (top of file) by yourself
+      - ConnectionStrings__DefaultConnection=Server=db;Database=CleanArchDB;User Id=sa;Password=kXP4$'0}9E+);TrustServerCertificate=True;
+    depends_on:
+      - db # backend have to wait for database
+
+volumes:
+  sql_data_v2:

@@ -15,7 +15,7 @@ services:
   # --- build backend (.NET) ---
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: CA_Presentation/Dockerfile
     container_name: backend_container
     ports:
@@ -26,6 +26,22 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=CleanArchDB;User Id=sa;Password=kXP4$'0}9E+);TrustServerCertificate=True;
     depends_on:
       - db # backend have to wait for database
+
+  #--- build frontend (TS React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_container
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5118/api  #connect via localhost (temp)
+    volumes:
+      - ./frontend:/app #live reload
+      - /app/node_modules
+    depends_on:
+      - backend #frontend waiting for backend
 
 volumes:
   sql_data_v2:

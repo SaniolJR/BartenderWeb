@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-public class JwtService
+public class JwtService : IJwtService
 {
 
     private readonly string key;
@@ -24,7 +24,7 @@ public class JwtService
     {
         var handler = new JwtSecurityTokenHandler();
 
-        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("moj_giga_tajny_klucz_min_32_znaki!!!"));
+        var symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
 
         //configure infos about user
         var claims = new ClaimsIdentity(new[]
@@ -38,9 +38,9 @@ public class JwtService
         {
             Subject = claims,   //userdata
             Expires = DateTime.UtcNow.AddMinutes(5),    //expires every 5 min
-            Issuer = "WebServer",       //WebServer sends
-            Audience = "WebApp",        //WebApp gets it
-            SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+            Issuer = issuer,       //WebServer sends
+            Audience = audience,        //WebApp gets it
+            SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature)
         };
 
         //create JWT token

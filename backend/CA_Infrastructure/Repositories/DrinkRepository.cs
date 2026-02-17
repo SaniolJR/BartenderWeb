@@ -37,7 +37,7 @@ namespace CA_Infrastructure.Repositories
                 return await _dbContext.Drinks
                     .Include(d => d.Ingredients) //get ingredients
                     .Where(d => (!verified || d.Verified) &&
-                                (string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())))
+                                (string.IsNullOrEmpty(textFilter) || d.Name.Contains(textFilter)))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
@@ -49,8 +49,8 @@ namespace CA_Infrastructure.Repositories
             var candidates = await _dbContext.Drinks
                 .Include(d => d.Ingredients) // get drink ingredients to count how many missing
                 .Where(d => (!verified || d.Verified)) // verified filter
-                .Where(d => string.IsNullOrEmpty(textFilter) || d.Name.ToLower().Contains(textFilter.ToLower())) // name filrer
-                .Where(d => d.Ingredients.Any(i => inputIngredients.Any(inp => inp.Equals(i.Name, StringComparison.OrdinalIgnoreCase)))) // only drinks that have our ingredient
+                .Where(d => string.IsNullOrEmpty(textFilter) || d.Name.Contains(textFilter)) // name filrer
+                .Where(d => d.Ingredients.Any(i => inputIngredients.Contains(i.Name))) // only drinks that have our ingredient
                 .ToListAsync();
 
             // filter drinks and reduce to missing count friendly

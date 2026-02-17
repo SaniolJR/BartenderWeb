@@ -26,6 +26,8 @@ services:
       - ConnectionStrings__DefaultConnection=Server=db;Database=CleanArchDB;User Id=sa;Password=kXP4$'0}9E+);TrustServerCertificate=True;
     depends_on:
       - db # backend have to wait for database
+    volumes:
+      - ./backend:/app
 
   #--- build frontend (TS React)
   frontend:

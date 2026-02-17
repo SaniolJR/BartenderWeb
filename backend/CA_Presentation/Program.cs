@@ -16,6 +16,15 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 
+//Add cookies
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.Cookie.Name = "AuthToken";
+        options.Cookie.HttpOnly = true;
+    });
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -50,6 +59,7 @@ var app = builder.Build();
 app.UseSerilogRequestLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+
 //Configure initialization od bd for docker
 using (var scope = app.Services.CreateScope())
 {
@@ -69,6 +79,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
+//enable auth
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

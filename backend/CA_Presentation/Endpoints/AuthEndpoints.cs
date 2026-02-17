@@ -30,4 +30,11 @@ public class AuthEndpoints(IJwtService jwtService) : ControllerBase
             return Unauthorized(new { message = "Unvalid login data!" });
         }
     }
+
+    [HttpPost("logout")]
+    public IActionResult UserLogout()
+    {
+        Response.Cookies.Delete("AuthToken");
+        return Ok();
+    }
 }

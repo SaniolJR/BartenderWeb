@@ -14,20 +14,30 @@ services:
 
   # --- build backend (.NET) ---
   backend:
-    build:
-      context: ./backend
-      dockerfile: CA_Presentation/Dockerfile
+    # hot reload needs SDK
+    image: mcr.microsoft.com/dotnet/sdk:9.0
     container_name: backend_container
+    
+    working_dir: /app/CA_Presentation
+    
+    # watch command watches and restart server after changes - hot reload
+    command: dotnet watch run --urls=http://+:8080
+    
     ports:
-      - "5118:8080"  # port from .env at FE
+      - "5118:8080"
+    
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development  #dev mode
-      # let docker find ip od db (top of file) by yourself
+      - ASPNETCORE_ENVIRONMENT=Development
+      # SQL Server connection string
       - ConnectionStrings__DefaultConnection=Server=db;Database=CleanArchDB;User Id=sa;Password=kXP4$'0}9E+);TrustServerCertificate=True;
+    
     depends_on:
-      - db # backend have to wait for database
+      - db
+    
     volumes:
       - ./backend:/app
+      - /app/CA_Presentation/bin
+      - /app/CA_Presentation/obj
 
   #--- build frontend (TS React)
   frontend:

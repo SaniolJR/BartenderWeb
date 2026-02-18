@@ -23,7 +23,7 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService) : C
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddDays(7)  //cookie is invalit after 7 days - change
+                Expires = DateTime.UtcNow.AddMinutes(5)  //cookie is invalit after 7 days - change
             });
             return Ok(user);
         }

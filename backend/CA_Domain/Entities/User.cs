@@ -10,6 +10,7 @@ namespace CA_Domain.Entities
         public List<Rating> Ratings { get; set; } = new();
         public List<Drink> FavouriteDrinks { get; set; } = new();
 
+        public RefreshToken UserRefreshToken { get; set; }
     }
 }
 

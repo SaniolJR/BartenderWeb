@@ -11,5 +11,7 @@ public interface IUserService
 
     Task<UserReturnDTO?> GetByNickAsync(string nick);
 
-    Task<UserReturnDTO> CreateAccount(RegisterAccDTO request);
+    Task<UserReturnDTO> CreateAccountAsync(RegisterAccDTO request);
+
+    Task<bool> ChangePasswordAsync(UpdatePasswordDTO dto, string username);
 }

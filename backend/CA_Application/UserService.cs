@@ -35,7 +35,7 @@ internal class UserService(IUserRepository userRepository, IMapper mapper) : IUs
         return mapper.Map<UserReturnDTO>(userDB);
     }
 
-    public async Task<UserReturnDTO> CreateAccount(RegisterAccDTO request)
+    public async Task<UserReturnDTO> CreateAccountAsync(RegisterAccDTO request)
     {
         string plainPasswd = request.Password;
 
@@ -52,5 +52,27 @@ internal class UserService(IUserRepository userRepository, IMapper mapper) : IUs
 
         //return dto without hashed password
         return mapper.Map<UserReturnDTO>(result);
+    }
+
+    public async Task<bool> ChangePasswordAsync(UpdatePasswordDTO dto, string username)
+    {
+        var userDB = await userRepository.GetByNickAsync(username);
+        if (userDB == null)
+        {
+            throw new Exception("UserNotFound");        //should never happen but needed
+        }
+
+        //check is old password is correct
+        var hasher = new PasswordHasher<User>();
+        var isOldCorrect = hasher.VerifyHashedPassword(userDB, userDB.Password, dto.OldPassword);
+        if (isOldCorrect == PasswordVerificationResult.Failed)
+        {
+            throw new Exception("InvalidOldPassword");
+        }
+
+        //change password
+        string hashedNewPassword = hasher.HashPassword(null, dto.NewPassword);
+
+        return await userRepository.ChangeUserPassword(userDB, hashedNewPassword);
     }
 }

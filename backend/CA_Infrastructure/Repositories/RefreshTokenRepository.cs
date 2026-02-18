@@ -32,4 +32,18 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task<bool> ChangeUserPassword(User user, string newPassword)
+    {
+        try
+        {
+            user.Password = newPassword;
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
 }

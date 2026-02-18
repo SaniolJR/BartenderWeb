@@ -8,6 +8,9 @@ using CA_Application;
 using Middlewares;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,12 +20,40 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 
 //Add cookies
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.Cookie.Name = "AuthToken";
-        options.Cookie.HttpOnly = true;
+        // rules for validating incoming token:
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,  //is server that created token trusted?
+            ValidateAudience = true,    //was token generated for this specific application?
+            ValidateLifetime = true,    //is token expired?
+            ValidateIssuerSigningKey = true,    //check if token was signed with trusted key
+
+            // set the expected issuer and audience values from the configuration file
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            // define security key used to verify token signature
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+
+        // custom logic that makes server to search for token in cookies!
+        options.Events = new JwtBearerEvents
+        {
+            // trigerred before token is validated 
+            OnMessageReceived = context =>
+            {
+                // instruct the middleware to read the token from a cookie instead of the standard authorization header
+                context.Token = context.Request.Cookies["AuthToken"];
+                return Task.CompletedTask;
+            }
+        };
     });
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers()

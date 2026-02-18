@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using CA_Application.DTOs;
 using CA_Application;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Endpoints.Auth;
 
@@ -104,8 +106,30 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         }
 
         //create account
-        var user = await userService.CreateAccount(request);
+        var user = await userService.CreateAccountAsync(request);
         return Ok(user);
+    }
 
+    [Authorize]
+    [HttpPost("update-password")]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDTO dto)
+    {
+        var username = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (username == null)
+            return Unauthorized();
+
+        try
+        {
+            await userService.ChangePasswordAsync(dto, username);
+            return Ok();
+        }
+        catch (Exception ex) when (ex.Message == "UserNotFound")
+        {
+            return NotFound(new { message = "User not found" });
+        }
+        catch (Exception ex) when (ex.Message == "InvalidOldPassword")
+        {
+            return BadRequest(new { message = "Old password is incorrect" });
+        }
     }
 }

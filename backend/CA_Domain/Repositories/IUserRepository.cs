@@ -5,4 +5,5 @@ namespace CA_Domain.Repositories;
 public interface IUserRepository
 {
     Task<User?> GetByNickAsync(string nick);
+    Task<User> CreateUserAsync(User user);
 }

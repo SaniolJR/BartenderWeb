@@ -16,6 +16,13 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByNickAsync(string nick)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Nick == nick);
+        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == nick);
+    }
+
+    public async Task<User> CreateUserAsync(User user)
+    {
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+        return user;
     }
 }

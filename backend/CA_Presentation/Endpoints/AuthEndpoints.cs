@@ -42,7 +42,7 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         if (user != null)
         {
             //generate JWT and reftesh tokens
-            await GenerateTokens(user.Id, user.Nick, user.Role);
+            await GenerateTokens(user.Id, user.Username, user.Role);
 
             return Ok(user);
         }
@@ -87,9 +87,25 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         await refreshTokenService.RevokeAsync(dbToken);
 
         //generate JWT and reftesh tokens
-        await GenerateTokens(dbToken.UserObj.Id, dbToken.UserObj.Nick, dbToken.UserObj.Role);
+        await GenerateTokens(dbToken.UserObj.Id, dbToken.UserObj.Username, dbToken.UserObj.Role);
 
         return Ok();
+    }
+
+    [HttpPost("registration")]
+    public async Task<IActionResult> RegisterAccount([FromBody] RegisterAccDTO request)
+    {
+
+        //check if user exists
+        var seachedUser = await userService.GetByNickAsync(request.Username);
+        if (seachedUser != null)
+        {
+            return Conflict("User already exists");
+        }
+
+        //create account
+        var user = await userService.CreateAccount(request);
+        return Ok(user);
 
     }
 }

@@ -10,6 +10,8 @@ namespace CA_Application.DTOs
         public UserProfile()
         {
             CreateMap<User, UserReturnDTO>();
+            CreateMap<UserReturnDTO, User>();
+            CreateMap<RegisterAccDTO, User>().ForMember(dest => dest.Role, opt => opt.MapFrom(src => "user"));
         }
     }
 }

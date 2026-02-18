@@ -20,10 +20,37 @@ internal class UserService(IUserRepository userRepository, IMapper mapper) : IUs
 
         //verify password
         var hasher = new PasswordHasher<User>();
-        var result = hasher.VerifyHashedPassword(userDB, userDB.Passwd, inputPasswd);
+        var result = hasher.VerifyHashedPassword(userDB, userDB.Password, inputPasswd);
         if (result == PasswordVerificationResult.Failed)
             return null;
 
         return mapper.Map<UserReturnDTO>(userDB);
+    }
+
+    public async Task<UserReturnDTO?> GetByNickAsync(string nick)
+    {
+        var userDB = await userRepository.GetByNickAsync(nick);
+        if (userDB == null)
+            return null;
+        return mapper.Map<UserReturnDTO>(userDB);
+    }
+
+    public async Task<UserReturnDTO> CreateAccount(RegisterAccDTO request)
+    {
+        string plainPasswd = request.Password;
+
+        //hash password
+        var hasher = new PasswordHasher<User>();
+        string hashedPassword = hasher.HashPassword(null, plainPasswd);
+        request.Password = hashedPassword;
+
+        //map DTO to User class
+        var user = mapper.Map<User>(request);
+
+        //create user
+        var result = await userRepository.CreateUserAsync(user);
+
+        //return dto without hashed password
+        return mapper.Map<UserReturnDTO>(result);
     }
 }

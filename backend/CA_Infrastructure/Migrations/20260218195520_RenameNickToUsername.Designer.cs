@@ -4,6 +4,7 @@ using CA_Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA_Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218195520_RenameNickToUsername")]
+    partial class RenameNickToUsername
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,7 +133,8 @@ namespace CA_Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("RefreshTokens");
                 });
@@ -147,7 +151,7 @@ namespace CA_Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Passwd")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -208,8 +212,8 @@ namespace CA_Infrastructure.Migrations
             modelBuilder.Entity("CA_Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("CA_Domain.Entities.User", "UserObj")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
+                        .WithOne("UserRefreshToken")
+                        .HasForeignKey("CA_Domain.Entities.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -242,7 +246,8 @@ namespace CA_Infrastructure.Migrations
 
                     b.Navigation("Ratings");
 
-                    b.Navigation("RefreshTokens");
+                    b.Navigation("UserRefreshToken")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

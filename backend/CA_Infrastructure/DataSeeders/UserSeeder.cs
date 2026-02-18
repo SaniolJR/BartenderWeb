@@ -31,11 +31,11 @@ namespace CA_Infrastructure.DataSeeders
             var hasher = new PasswordHasher<User>();
             var user = new User
             {
-                Nick = "Emil G",
+                Username = "Emil G",
                 Email = "emilGitarzysta@gmail.com",
                 Role = "user"
             };
-            user.Passwd = hasher.HashPassword(user, "Haslo.123");
+            user.Password = hasher.HashPassword(user, "Haslo.123");
             return [user];
         }
     }

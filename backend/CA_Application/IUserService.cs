@@ -8,4 +8,8 @@ namespace CA_Application;
 public interface IUserService
 {
     Task<UserReturnDTO?> GetByNickAndValidateAsync(LoginRequestDTO request);
+
+    Task<UserReturnDTO?> GetByNickAsync(string nick);
+
+    Task<UserReturnDTO> CreateAccount(RegisterAccDTO request);
 }

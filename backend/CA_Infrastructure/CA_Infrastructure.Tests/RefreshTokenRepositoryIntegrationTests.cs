@@ -17,7 +17,7 @@ public class RefreshTokenRepositoryIntegrationTests
             .Options;
         using var context = new MainDbContext(options);
 
-        var user = new User { Nick = "Emil G", Email = "test@test.com", Passwd = "hash", Role = "user" };
+        var user = new User { Username = "Emil G", Email = "test@test.com", Passwd = "hash", Role = "user" };
         context.Users.Add(user);
         await context.SaveChangesAsync();
 

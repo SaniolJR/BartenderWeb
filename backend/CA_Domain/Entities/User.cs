@@ -3,13 +3,13 @@ namespace CA_Domain.Entities
     public class User
     {
         public int Id { get; set; }
-        public string Passwd { get; set; }
-        public string Nick { get; set; }
+        public string Password { get; set; }
+        public string Username { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
         public List<Rating> Ratings { get; set; } = new();
         public List<Drink> FavouriteDrinks { get; set; } = new();
-        public RefreshToken UserRefreshToken { get; set; }
+        public List<RefreshToken> RefreshTokens { get; set; } = new();  //multilog enabled (smartphone and pc..)
     }
 }
 

@@ -135,4 +135,128 @@ public class IngredientRepositoryIntegrationTests
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task AddIngredientAsync_ValidIngredient_AddsIngredientToDatabase()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "IngredientTestDb1")
+            .Options;
+        using var context = new MainDbContext(options);
+        var repository = new IngredientRepository(context);
+
+        var ingredient = new Ingredient
+        {
+            Name = "Lime"
+        };
+
+        // Act
+        var result = await repository.AddIngredientAsync(ingredient);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Lime", result.Name);
+        Assert.Single(context.Ingredients);
+    }
+
+    [Fact]
+    public async Task GetIngredientByIdAsync_ExistingId_ReturnsIngredient()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "IngredientTestDb2")
+            .Options;
+        using var context = new MainDbContext(options);
+        var repository = new IngredientRepository(context);
+
+        var ingredient = new Ingredient
+        {
+            Id = 123,
+            Name = "Sugar"
+        };
+        context.Ingredients.Add(ingredient);
+        await context.SaveChangesAsync();
+
+        // Act
+        var output = await repository.GetIngredientByIdAsync(123);
+
+        // Assert
+        Assert.NotNull(output);
+        Assert.Equal("Sugar", output.Name);
+        Assert.Single(context.Ingredients);
+    }
+
+    [Fact]
+    public async Task GetIngredientByIdAsync_NonExistingId_ReturnsNull()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "IngredientTestDb3")
+            .Options;
+        using var context = new MainDbContext(options);
+        var repository = new IngredientRepository(context);
+
+        var ingredient = new Ingredient
+        {
+            Id = 1,
+            Name = "Salt"
+        };
+        context.Ingredients.Add(ingredient);
+        await context.SaveChangesAsync();
+
+        // Act
+        var output = await repository.GetIngredientByIdAsync(999);
+
+        // Assert
+        Assert.Null(output);
+        Assert.Single(context.Ingredients);
+    }
+
+    [Fact]
+    public async Task AddIngredientAsync_MultipleIngredients_AddsAllToDatabase()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "IngredientTestDb4")
+            .Options;
+        using var context = new MainDbContext(options);
+        var repository = new IngredientRepository(context);
+
+        var ingredient1 = new Ingredient { Name = "Vodka" };
+        var ingredient2 = new Ingredient { Name = "Orange Juice" };
+
+        // Act
+        await repository.AddIngredientAsync(ingredient1);
+        await repository.AddIngredientAsync(ingredient2);
+
+        // Assert
+        Assert.Equal(2, context.Ingredients.Count());
+        var allIngredients = await context.Ingredients.ToListAsync();
+        Assert.Contains(allIngredients, i => i.Name == "Vodka");
+        Assert.Contains(allIngredients, i => i.Name == "Orange Juice");
+    }
+
+    [Fact]
+    public async Task GetIngredientByIdAsync_AfterAddingIngredient_ReturnsCorrectIngredient()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<MainDbContext>()
+            .UseInMemoryDatabase(databaseName: "IngredientTestDb5")
+            .Options;
+        using var context = new MainDbContext(options);
+        var repository = new IngredientRepository(context);
+
+        var ingredient = new Ingredient { Name = "Mint" };
+        var addedIngredient = await repository.AddIngredientAsync(ingredient);
+
+        // Act
+        var output = await repository.GetIngredientByIdAsync(addedIngredient.Id);
+
+        // Assert
+        Assert.NotNull(output);
+        Assert.Equal("Mint", output.Name);
+        Assert.Equal(addedIngredient.Id, output.Id);
+    }
+
+
 }

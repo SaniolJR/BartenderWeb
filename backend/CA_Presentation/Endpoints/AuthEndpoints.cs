@@ -53,9 +53,21 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
     }
 
     [HttpPost("logout")]
-    public IActionResult UserLogout()
+    public async Task<IActionResult> UserLogout()
     {
+
+        var cookiesToken = Request.Cookies["RefreshToken"];
+        if (cookiesToken != null)
+        {
+            var dbToken = await refreshTokenService.ValidateAsync(cookiesToken);
+            if (dbToken != null)
+            {
+                await refreshTokenService.RevokeAsync(dbToken);
+            }
+        }
         Response.Cookies.Delete("AuthToken");
+        Response.Cookies.Delete("RefreshToken");
+
         return Ok();
     }
 

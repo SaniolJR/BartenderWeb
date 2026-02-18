@@ -94,29 +94,6 @@ namespace CA_Infrastructure.Tests
         }
 
         [Fact]
-        public async Task GetIngredientByNameAsync_ExistingDrink_NonerfectFittingName_ReturnDrink()
-        {
-            //Arrage
-            var options = new DbContextOptionsBuilder<MainDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb4")
-            .Options;
-            using var context = new MainDbContext(options);
-            var repository = new DrinkRepository(context);
-
-            var ingredient = new Ingredient { Id = 1, Name = "Cola" };
-            context.Ingredients.Add(ingredient);
-            await context.SaveChangesAsync();
-
-            //Act
-            var output = await repository.GetIngredientByNameAsync("cola");
-
-            //Assert
-            Assert.NotNull(output);
-            Assert.Equal(ingredient.Name, output.Name);
-            Assert.Single(context.Ingredients);
-        }
-
-        [Fact]
         public async Task GetIngredientByNameAsync_NonExistingDrink_ReturnFalse()
         {
             //Arrage

@@ -114,6 +114,11 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
     [HttpPost("update-password")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDTO dto)
     {
+        if (dto.OldPassword == dto.NewPassword)
+        {
+            return BadRequest(new { message = "Cannot change to old pasword!" });
+        }
+
         var username = User.FindFirst(ClaimTypes.Name)?.Value;
         if (username == null)
             return Unauthorized();

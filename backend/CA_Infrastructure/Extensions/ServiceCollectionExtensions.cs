@@ -20,6 +20,7 @@ namespace CA_Infrastructure.Extensions
             services.AddScoped<IDrinkRepository, DrinkRepository>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         }
     }

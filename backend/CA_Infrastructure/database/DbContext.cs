@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CA_Domain.Entities;
+using Microsoft.EntityFrameworkCore.Internal;
 
 //class which represents whole DB instance in project
 
@@ -16,5 +17,6 @@ namespace CA_Infrastructure.Database
         public virtual DbSet<Ingredient> Ingredients { get; set; }
         public virtual DbSet<Drink> Drinks { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

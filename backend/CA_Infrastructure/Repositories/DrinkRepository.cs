@@ -84,7 +84,7 @@ namespace CA_Infrastructure.Repositories
         public async Task<Ingredient> GetIngredientByNameAsync(string name)
         {
             return await _dbContext.Ingredients
-                .FirstOrDefaultAsync(i => i.Name.ToLower() == name.ToLower());
+                .FirstOrDefaultAsync(i => i.Name == name);
         }
 
         public async Task<List<Ingredient>> GetIngredientsByNamesAsync(List<string> names)

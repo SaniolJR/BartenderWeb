@@ -67,6 +67,10 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<CA_Infrastructure.Database.MainDbContext>();
     // Use migration taht creates tables if they dont exist
     dbContext.Database.Migrate();
+
+    // Seeder
+    var userSeeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+    await userSeeder.Seed();
 }
 
 

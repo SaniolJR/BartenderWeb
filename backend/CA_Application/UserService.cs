@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CA_Application;
 
-internal class UserService(IUserRepository userRepository) : IUserService
+internal class UserService(IUserRepository userRepository, IMapper mapper) : IUserService
 {
-    public async Task<User?> GetByNickAndValidateAsync(LoginRequestDTO request)
+    public async Task<UserReturnDTO?> GetByNickAndValidateAsync(LoginRequestDTO request)
     {
         string inputNick = request.Username;
         string inputPasswd = request.Password;
@@ -24,6 +24,6 @@ internal class UserService(IUserRepository userRepository) : IUserService
         if (result == PasswordVerificationResult.Failed)
             return null;
 
-        return userDB;
+        return mapper.Map<UserReturnDTO>(userDB);
     }
 }

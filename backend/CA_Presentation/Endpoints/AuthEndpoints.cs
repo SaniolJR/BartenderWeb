@@ -23,9 +23,9 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService) : C
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddDays(7)  //cookie is invalit after 7 days
+                Expires = DateTimeOffset.UtcNow.AddDays(7)  //cookie is invalit after 7 days - change
             });
-            return Ok(new { token });
+            return Ok(user);
         }
         else        //if user doesnt exist
         {
@@ -39,4 +39,5 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService) : C
         Response.Cookies.Delete("AuthToken");
         return Ok();
     }
+    //todo endpoint odswierzajacy <5min
 }

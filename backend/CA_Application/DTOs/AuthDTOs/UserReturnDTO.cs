@@ -1,0 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using CA_Domain.Entities;
+
+namespace CA_Application.DTOs
+{
+    public class UserReturnDTO
+    {
+        public int Id { get; set; }
+        public string Nick { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+    }
+}

@@ -14,7 +14,7 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<User> GetByNickAsync(string nick)
+    public async Task<User?> GetByNickAsync(string nick)
     {
         return await _dbContext.Users.FirstOrDefaultAsync(u => u.Nick == nick);
     }

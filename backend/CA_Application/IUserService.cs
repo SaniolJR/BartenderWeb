@@ -7,5 +7,5 @@ namespace CA_Application;
 
 public interface IUserService
 {
-    Task<User?> GetByNickAndValidateAsync(LoginRequestDTO request);
+    Task<UserReturnDTO?> GetByNickAndValidateAsync(LoginRequestDTO request);
 }

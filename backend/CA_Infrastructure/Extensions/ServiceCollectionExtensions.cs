@@ -19,6 +19,7 @@ namespace CA_Infrastructure.Extensions
             services.AddScoped<IUserSeeder, UserSeeder>();
             services.AddScoped<IDrinkRepository, DrinkRepository>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
         }
     }

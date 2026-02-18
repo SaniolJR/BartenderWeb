@@ -1,5 +1,6 @@
 using CA_Domain.Entities;
 using CA_Infrastructure.Database;
+using Microsoft.AspNetCore.Identity;
 
 namespace CA_Infrastructure.DataSeeders
 {
@@ -27,14 +28,15 @@ namespace CA_Infrastructure.DataSeeders
 
         private IEnumerable<User> GetUsers()
         {
-            List<User> users = [
-                new User {
-                    Passwd = "Haslo.123",
-                    Nick = "Emil G",
-                    Email = "emilGitarzysta@gmail.com"
-                }
-            ];
-            return users;
+            var hasher = new PasswordHasher<User>();
+            var user = new User
+            {
+                Nick = "Emil G",
+                Email = "emilGitarzysta@gmail.com",
+                Role = "user"
+            };
+            user.Passwd = hasher.HashPassword(user, "Haslo.123");
+            return [user];
         }
     }
 }

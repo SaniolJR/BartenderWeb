@@ -2,14 +2,38 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using CA_Application.DTOs;
 using CA_Application;
-using CA_Infrastructure.Repositories;
 
 namespace Endpoints.Auth;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthEndpoints(IJwtService jwtService, IUserService userService) : ControllerBase
+public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRefreshTokenService refreshTokenService) : ControllerBase
 {
+
+    private async Task GenerateTokens(int id, string nick, string role)
+    {
+        //generate JWT token
+        var token = jwtService.GenerateToken(id, nick, role);
+        Response.Cookies.Append("AuthToken", token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddMinutes(15)
+        });
+
+
+
+        var refreshToken = await refreshTokenService.GenerateAndSaveAsync(id);
+        Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> UserLogin([FromBody] LoginRequestDTO request)
     {
@@ -17,14 +41,9 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService) : C
         var user = await userService.GetByNickAndValidateAsync(request);
         if (user != null)
         {
-            var token = jwtService.GenerateToken(user.Id, user.Nick, user.Role);
-            Response.Cookies.Append("AuthToken", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(5)  //cookie is invalit after 7 days - change
-            });
+            //generate JWT and reftesh tokens
+            await GenerateTokens(user.Id, user.Nick, user.Role);
+
             return Ok(user);
         }
         else        //if user doesnt exist
@@ -39,5 +58,26 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService) : C
         Response.Cookies.Delete("AuthToken");
         return Ok();
     }
-    //todo endpoint odswierzajacy <5min
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshSession()
+    {
+        var cookiesToken = Request.Cookies["RefreshToken"];
+
+        if (cookiesToken == null)
+            return Unauthorized(new { message = "Session has been expired" });
+
+        var dbToken = await refreshTokenService.ValidateAsync(cookiesToken);
+
+        if (dbToken == null)
+            return Unauthorized(new { message = "Session has been expired" });
+
+        await refreshTokenService.RevokeAsync(dbToken);
+
+        //generate JWT and reftesh tokens
+        await GenerateTokens(dbToken.UserObj.Id, dbToken.UserObj.Nick, dbToken.UserObj.Role);
+
+        return Ok();
+
+    }
 }

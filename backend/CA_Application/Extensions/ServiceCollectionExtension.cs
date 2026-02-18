@@ -11,5 +11,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IIngredientService, IngredientService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
     }
 }

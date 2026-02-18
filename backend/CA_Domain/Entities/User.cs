@@ -6,6 +6,7 @@ namespace CA_Domain.Entities
         public string Passwd { get; set; }
         public string Nick { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
         public List<Rating> Ratings { get; set; } = new();
         public List<Drink> FavouriteDrinks { get; set; } = new();
 

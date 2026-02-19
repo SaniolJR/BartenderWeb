@@ -3,11 +3,11 @@ import { useState, type MouseEvent } from 'react'
 import { AppBar, Box, Button, Menu, MenuItem, Toolbar } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
-const navItems = [
+const navItemsLogout = [
   { label: 'Search', to: '/search' },
   { label: 'Add drink', to: '/addDrink' },
   { label: 'Add Ingredient', to: '/addIngredient' },
-  { label: 'Login/Register', to: '/Login-Register' }
+  { label: 'Login/Register', to: '/login' }
   
 ] as const
 
@@ -19,7 +19,11 @@ const navItemsLogged = [
   { label: 'Logout', to: '/logout' },
 ] as const
 
-export default function NavBar() {
+
+export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
+
+  const navItems = isLoggedIn ? navItemsLogged : navItemsLogout;
+
   //State to handle Menu dropwon on phones
   const [dropEL, setDropEL] = useState<HTMLElement | null>(null)
   const menuOpen = Boolean(dropEL)

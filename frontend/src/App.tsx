@@ -7,16 +7,33 @@ import AddDrinkPage from './AddDrink/AddDrinkPage'
 import FavDrinksPage from './FavDrinks/FavDrinksPage'
 import AccPage from './Account/AccPage'
 import LogoutPage from './Logging/LogoutPage'
-import LoginRegisterPage from './Logging/LoginRegisterPage'
+import LoginPage from './Logging/LoginPage'
+import RegisterPage from './Logging/RegisterPage'
 import AddIngredientPage from './AddIngredient/AddIngredientPage'
 import DrinksDetailsPage from './SearchDrink/DrinksDetailsPage';
+import { useState, useEffect } from 'react'
+import UseRefreshToken from "./Logging/refreshToken";
 
 
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const refreshToken = UseRefreshToken(setIsLoggedIn);
+  
+  //uing refresh token func to interval refresh
+  useEffect( () => {
+    if(!isLoggedIn) return;
+    
+    const interval = setInterval(() => {
+      refreshToken();
+    }, 4 * 60 * 1000);  //every 4 min
+    
+    return () => clearInterval(interval);
+  }, [isLoggedIn, refreshToken]);
+
   return (
     <>
-      <NavBar />
+      <NavBar isLoggedIn={isLoggedIn}/>
 
       <Routes>
         <Route path="/" element={<BartenderWebPage />} />
@@ -27,7 +44,8 @@ export default function App() {
         <Route path="/account" element={<AccPage/>} />
         <Route path="/logout" element={<LogoutPage/>} />
         <Route path="/drink/:id" element={<DrinksDetailsPage />} />
-        <Route path="/Login-Register" element={<LoginRegisterPage/>}/>
+        <Route path="/login" element={<LoginPage onLoginSuccess={() => setIsLoggedIn(true)} />} />
+        <Route path="/register" element={<RegisterPage/>}/>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

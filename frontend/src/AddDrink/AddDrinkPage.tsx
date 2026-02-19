@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Container, TextField, Button, Typography, Box } from '@mui/material'
+import { Container, TextField, Button, Typography } from '@mui/material'
 import IngredientsBox from '../SearchDrink/Ingredients/IngredientsBox'
 
 

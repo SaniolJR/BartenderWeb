@@ -45,7 +45,10 @@ export default function App() {
         <Route path="/addIngredient" element={<AddIngredientPage/>} />
         <Route path="/favourites" element={<FavDrinksPage/>} />
         <Route path="/account" element={<AccPage user={user} />} />
-        <Route path="/logout" element={<LogoutPage/>} />
+        <Route
+          path="/logout"
+          element={<LogoutPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/drink/:id" element={<DrinksDetailsPage />} />
         <Route path="/login" element={<LoginPage 
             onLoginSuccess={() => setIsLoggedIn(true)}

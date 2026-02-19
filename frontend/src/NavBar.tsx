@@ -13,7 +13,7 @@ const navItemsLogout = [
 
 const navItemsLogged = [
   { label: 'Search', to: '/search' },
-  { label: 'Add drink', to: '/add' },
+  { label: 'Add drink', to: '/addDrink' },
   { label: 'Favourites Drinks', to: '/favourites' },
   { label: 'Account', to: '/account' },
   { label: 'Logout', to: '/logout' },

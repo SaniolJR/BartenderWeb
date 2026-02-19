@@ -13,11 +13,14 @@ import AddIngredientPage from './AddIngredient/AddIngredientPage'
 import DrinksDetailsPage from './SearchDrink/DrinksDetailsPage';
 import { useState, useEffect } from 'react'
 import UseRefreshToken from "./Logging/refreshToken";
+import type { UserType } from "./types";
 
 
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+
   const refreshToken = UseRefreshToken(setIsLoggedIn);
   
   //uing refresh token func to interval refresh
@@ -41,10 +44,12 @@ export default function App() {
         <Route path="/addDrink" element={<AddDrinkPage/>} />
         <Route path="/addIngredient" element={<AddIngredientPage/>} />
         <Route path="/favourites" element={<FavDrinksPage/>} />
-        <Route path="/account" element={<AccPage/>} />
+        <Route path="/account" element={<AccPage user={user} />} />
         <Route path="/logout" element={<LogoutPage/>} />
         <Route path="/drink/:id" element={<DrinksDetailsPage />} />
-        <Route path="/login" element={<LoginPage onLoginSuccess={() => setIsLoggedIn(true)} />} />
+        <Route path="/login" element={<LoginPage 
+            onLoginSuccess={() => setIsLoggedIn(true)}
+            setUser={setUser} />} />
         <Route path="/register" element={<RegisterPage/>}/>
 
         <Route path="*" element={<Navigate to="/" replace />} />

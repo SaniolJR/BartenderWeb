@@ -2,9 +2,16 @@ import { useState } from 'react'
 import { Button, Stack, TextField, Typography, IconButton, Container } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { Link, useNavigate } from 'react-router-dom'
+import type { UserType } from "../types";
 
 
-export default function LoginPage({onLoginSuccess} : {onLoginSuccess: () => void}){
+export default function LoginPage({
+  onLoginSuccess,
+  setUser,
+}: {
+  onLoginSuccess: () => void;
+  setUser: (user: UserType) => void;
+}) {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -31,6 +38,8 @@ export default function LoginPage({onLoginSuccess} : {onLoginSuccess: () => void
             if(response.ok){
                 //logged - change navbar and navigate to user
                 onLoginSuccess();
+                const user: UserType = await response.json();
+                setUser(user);
                 navigate("/account");
             }
             else{

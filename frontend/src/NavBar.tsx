@@ -6,11 +6,12 @@ import { Link as RouterLink } from 'react-router-dom'
 const navItems = [
   { label: 'Search', to: '/search' },
   { label: 'Add drink', to: '/addDrink' },
-  { label: 'Add Ingredient', to: '/addIngredient' }
+  { label: 'Add Ingredient', to: '/addIngredient' },
+  { label: 'Login/Register', to: '/Login-Register' }
   
 ] as const
 
-const navItemsFull = [
+const navItemsLogged = [
   { label: 'Search', to: '/search' },
   { label: 'Add drink', to: '/add' },
   { label: 'Favourites Drinks', to: '/favourites' },

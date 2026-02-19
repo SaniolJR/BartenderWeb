@@ -1,6 +1,7 @@
 using CA_Application;
 using CA_Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Endpoints.Drink;
 
@@ -27,6 +28,7 @@ public class DrinkEndpoints(IDrinkService drinkService) : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddDrink([FromBody] AddDrinkDTO dto)
     {

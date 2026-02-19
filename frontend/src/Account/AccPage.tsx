@@ -66,6 +66,7 @@ const API_URL = import.meta.env.VITE_API_URL    //link to backend from .env
                         "& input": { fontSize: "3vh" },
                         "& label": { fontSize: "2vh" },
                         "& .MuiFormHelperText-root": { fontSize: "2vh", fontWeight: "bold" },
+                        width: "100%",
                         mb: 2
                     }}
               />

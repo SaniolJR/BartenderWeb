@@ -16,10 +16,15 @@ export default function AddIngredientPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: ingredientName }),
+      credentials: "include"
     })
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        setMessage('✅ Ingredient added!')
+    if(res.ok){
+        setMessage("✅ Ingredient added successfully!");
+    }
+    else {
+        const msg = await res.text();
+        throw new Error(msg || `HTTP ${res.status}`);
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
     setMessage(`❌ Cannot added Ingredient, sorry something is wrong: ${msg}`)

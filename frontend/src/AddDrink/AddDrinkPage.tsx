@@ -27,6 +27,7 @@ const handleAddDrink = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(drink),
+      credentials: "include"
     });
 
     // --- FIX START: Bezpieczne czytanie odpowiedzi ---

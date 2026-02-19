@@ -70,3 +70,7 @@ Frontend:
 -routing
 -wszystko na linkach ma się dziac, by można się dzielić URLami
 -responsywny design (działa inaczej na telefonie inaczej na pc)
+
+
+------------------------------
+opcjonalne: usuwanie konta, dodawanie drinkow do ulubionych

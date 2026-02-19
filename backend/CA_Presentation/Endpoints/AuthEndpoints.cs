@@ -20,7 +20,7 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddMinutes(15)
         });
 
@@ -31,7 +31,7 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.None,       //should be Strict, but blocks between different ports at localhost
             Expires = DateTime.UtcNow.AddDays(7)
         });
     }

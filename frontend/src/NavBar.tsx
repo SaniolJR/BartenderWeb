@@ -5,8 +5,6 @@ import { Link as RouterLink } from 'react-router-dom'
 
 const navItemsLogout = [
   { label: 'Search', to: '/search' },
-  { label: 'Add drink', to: '/addDrink' },
-  { label: 'Add Ingredient', to: '/addIngredient' },
   { label: 'Login/Register', to: '/login' }
   
 ] as const
@@ -14,7 +12,7 @@ const navItemsLogout = [
 const navItemsLogged = [
   { label: 'Search', to: '/search' },
   { label: 'Add drink', to: '/addDrink' },
-  { label: 'Favourites Drinks', to: '/favourites' },
+  { label: 'Add Ingredient', to: '/addIngredient' },
   { label: 'Account', to: '/account' },
   { label: 'Logout', to: '/logout' },
 ] as const

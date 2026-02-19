@@ -78,7 +78,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Frontend adress
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173") // Frontend adress
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -112,6 +112,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//middleware handling authorization errors
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (context.Response.StatusCode == 401)
+    {
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync("{\"message\": \"Login session is invalid\"}");
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseCors();

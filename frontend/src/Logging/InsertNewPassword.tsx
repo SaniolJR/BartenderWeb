@@ -93,7 +93,7 @@ const changePasswordSchema = z.object({
                     }}
                 />
 
-                <Button sx={{ fontSize: "3vh" }} type="submit">Change password</Button>
+                <Button sx={{ fontSize: "3vh" }} type="submit">Validate and set password</Button>
          </Stack>
         </form>
     )

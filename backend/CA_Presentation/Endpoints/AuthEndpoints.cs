@@ -50,7 +50,7 @@ public class AuthEndpoints(IJwtService jwtService, IUserService userService, IRe
         }
         else        //if user doesnt exist
         {
-            return Unauthorized(new { message = "Unvalid login data!" });
+            return Unauthorized(new { message = "Invalid login data!" });
         }
     }
 

@@ -18,7 +18,13 @@ public class UserRepositoryIntegrationTests
         using var context = new MainDbContext(options);
 
         //act
-        context.Users.Add(new User { Username = "Emil G", Email = "test@test.com", Passwd = "hash", Role = "user" });
+        context.Users.Add(new User
+        {
+            Username = "Emil G",
+            Email = "test@test.com",
+            Password = "hash",
+            Role = "user"
+        });
         await context.SaveChangesAsync();
 
         var repo = new UserRepository(context);
@@ -39,7 +45,13 @@ public class UserRepositoryIntegrationTests
         using var context = new MainDbContext(options);
 
         //act
-        context.Users.Add(new User { Username = "Emil G", Email = "test@test.com", Passwd = "hash", Role = "user" });
+        context.Users.Add(new User
+        {
+            Username = "Emil G",
+            Email = "test@test.com",
+            Password = "hash",
+            Role = "user"
+        });
         await context.SaveChangesAsync();
 
         var repo = new UserRepository(context);

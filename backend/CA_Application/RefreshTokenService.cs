@@ -3,8 +3,8 @@ using CA_Domain.Repositories;
 
 namespace CA_Application
 {
-    internal class RefreshTokenService(IRefreshTokenRepository refreshTokenRepository, IJwtService jwtService)
-                                     : IRefreshTokenService
+    internal class RefreshTokenService(IRefreshTokenRepository refreshTokenRepository,
+         IJwtService jwtService) : IRefreshTokenService
     {
         public async Task<string> GenerateAndSaveAsync(int userId)
         {
